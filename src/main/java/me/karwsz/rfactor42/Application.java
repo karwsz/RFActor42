@@ -1,22 +1,18 @@
 package me.karwsz.rfactor42;
 
 import com.formdev.flatlaf.FlatDarculaLaf;
-import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatIntelliJLaf;
-import com.formdev.flatlaf.FlatLaf;
-import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import me.karwsz.rfactor42.debug.ExceptionWindow;
+import me.karwsz.rfactor42.modules.RFActorMenuBar;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 public class Application extends JFrame {
 
     public static Application instance;
 
-    public static ResourceBundle localeBundle;
+    public static ResourceBundle loc;
 
     public Application() {
         setTitle("RFActor42 level editor by Karwsz");
@@ -28,13 +24,21 @@ public class Application extends JFrame {
         setLocationRelativeTo(null);
         setLocationByPlatform(true);
         setMinimumSize(new Dimension(1600, 800));
+
+        setJMenuBar(new RFActorMenuBar());
+
         pack();
         setVisible(true);
     }
 
     public static void main(String[] args) {
-        FlatDarculaLaf.setup();
 
+        //Defaults
+        FlatDarculaLaf.setup();
+        parseStartupParameter("locale", "en");
+
+
+        //Parse args
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.startsWith("+")) {
@@ -51,21 +55,36 @@ public class Application extends JFrame {
     Parameters list:
 
     +locale <language> //for example +locale en, +locale pl, +locale de
-
+    +theme Darcula/IntellIJ/Light/Dark //CASE SENSITIVE
      */
 
     private static void parseStartupParameter(String key, String value) {
-        if (key.equalsIgnoreCase("locale") && value != null) {
-            try {
-                localeBundle = PropertyResourceBundle.getBundle("locales/locale", new Locale(value));
-            } catch (MissingResourceException e) {
-                //If locale is not supported use English
+        switch (key.toLowerCase()) {
+            case "locale" -> {
+                if (value == null) return;
                 try {
-                    localeBundle = PropertyResourceBundle.getBundle("locales/locale", new Locale("en"));
-                } catch (MissingResourceException ignore) {
-                    IllegalStateException illegalStateException = new IllegalStateException("No locale found");
-                    new ExceptionWindow(illegalStateException);
-                    throw illegalStateException;
+                    loc = PropertyResourceBundle.getBundle("locales/locale", new Locale(value));
+                } catch (MissingResourceException e) {
+                    //If locale is not supported use English
+                    try {
+                        loc = PropertyResourceBundle.getBundle("locales/locale", new Locale("en"));
+                    } catch (MissingResourceException ignore) {
+                        IllegalStateException illegalStateException = new IllegalStateException("No locale found");
+                        new ExceptionWindow(illegalStateException);
+                        throw illegalStateException;
+                    }
+                }
+            }
+            case "theme" -> {
+                if (value == null) return;
+                String className = "com.formdev.flatlaf.Flat" + value + "Laf";
+                try {
+                    UIManager.setLookAndFeel(className);
+                } catch (
+                        ClassNotFoundException |
+                        InstantiationException |
+                        IllegalAccessException |
+                        UnsupportedLookAndFeelException ignore) {
                 }
             }
         }
