@@ -2,54 +2,15 @@ package me.karwsz.rfactor42;
 
 import com.formdev.flatlaf.FlatDarculaLaf;
 import me.karwsz.rfactor42.debug.ExceptionWindow;
+import me.karwsz.rfactor42.modules.ModuleManager;
 import me.karwsz.rfactor42.modules.RFActorMenuBar;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.*;
 
 public class Application extends JFrame {
-
-    public static Application instance;
-
-    public static ResourceBundle loc;
-
-    public Application() {
-        setTitle("RFActor42 level editor by Karwsz");
-        init();
-    }
-
-    protected void init() {
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLocationByPlatform(true);
-        setMinimumSize(new Dimension(1600, 800));
-
-        setJMenuBar(new RFActorMenuBar());
-
-        pack();
-        setVisible(true);
-    }
-
-    public static void main(String[] args) {
-
-        //Defaults
-        FlatDarculaLaf.setup();
-        parseStartupParameter("locale", "en");
-
-
-        //Parse args
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if (arg.startsWith("+")) {
-                parseStartupParameter(arg.substring(1), i + 1< args.length ? args[i + 1] : null);
-            }
-        }
-
-        SwingUtilities.invokeLater(() -> {
-            instance = new Application();
-        });
-    }
 
     /*
     Parameters list:
@@ -89,4 +50,62 @@ public class Application extends JFrame {
             }
         }
     }
+
+    public static Application instance;
+    public static ResourceBundle loc;
+
+    public ModuleManager moduleManager;
+
+
+
+    public Application() {
+        setTitle("RFActor42 level editor by Karwsz");
+        init();
+    }
+
+    protected void init() {
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLocationByPlatform(true);
+        setPreferredSize(new Dimension(1600, 800));
+
+        JPanel contentPane = new JPanel();
+        contentPane.setOpaque(true);
+        contentPane.setBorder(new EmptyBorder(new Insets(5, 10, 5, 10)));
+        setContentPane(contentPane);
+
+        setJMenuBar(new RFActorMenuBar());
+
+        initComponents();
+
+        pack();
+        setVisible(true);
+    }
+
+    private void initComponents() {
+        this.moduleManager = new ModuleManager();
+        this.moduleManager.attach(this.getContentPane());
+    }
+
+    public static void main(String[] args) {
+
+        //Defaults
+        FlatDarculaLaf.setup();
+        parseStartupParameter("locale", "en");
+
+
+        //Parse args
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (arg.startsWith("+")) {
+                parseStartupParameter(arg.substring(1), i + 1< args.length ? args[i + 1] : null);
+            }
+        }
+
+        SwingUtilities.invokeLater(() -> {
+            instance = new Application();
+        });
+    }
+
+
 }
