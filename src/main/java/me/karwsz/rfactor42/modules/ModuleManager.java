@@ -1,10 +1,12 @@
 package me.karwsz.rfactor42.modules;
 
-import me.karwsz.rfactor42.modules.files.FileStructure;
+import me.karwsz.rfactor42.Application;
+import me.karwsz.rfactor42.debug.ExceptionWindow;
 import me.karwsz.rfactor42.objects.ProjectInfo;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 
 public class ModuleManager {
 
@@ -32,6 +34,20 @@ public class ModuleManager {
     }
 
     private boolean fileStructureInit = false;
+
+    public void openProject(String name, File file) {
+        if (file == null) {
+            projectInfo = new ProjectInfo(name, "1.0", null);
+        }
+        else if (!file.exists()) {
+            new ExceptionWindow(new IllegalArgumentException("File does not exist"));
+        }
+        else {
+            projectInfo = new ProjectInfo(name, "1.0", null);
+        }
+
+        updateFileStructure();
+    }
 
     public void updateFileStructure() {
         if (!fileStructureInit) {

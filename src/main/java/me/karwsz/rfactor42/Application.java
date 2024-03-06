@@ -52,7 +52,7 @@ public class Application extends JFrame {
     }
 
     public static Application instance;
-    public static ResourceBundle loc;
+    private static ResourceBundle loc;
 
     public ModuleManager moduleManager;
 
@@ -107,5 +107,20 @@ public class Application extends JFrame {
         });
     }
 
+    /**
+     *
+     * @param key - key of the resource
+     * @return localized string, if present in property file
+     * @throws MissingResourceException if key is not present
+     * (and informs user through ExceptionWindow)
+     */
+    public static String localized(String key) {
+        try {
+            return Application.loc.getString(key);
+        } catch (MissingResourceException e) {
+            new ExceptionWindow(e);
+            throw e;
+        }
+    }
 
 }
