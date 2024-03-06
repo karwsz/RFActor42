@@ -43,8 +43,10 @@ public class ModuleManager {
             new ExceptionWindow(new IllegalArgumentException("File does not exist"));
         }
         else {
-            projectInfo = new ProjectInfo(name, "1.0", null);
+            projectInfo = new ProjectInfo(name, "1.0", file);
         }
+
+        fileStructure.open(file);
 
         updateFileStructure();
     }
@@ -54,7 +56,6 @@ public class ModuleManager {
             showFileStructure();
             fileStructureInit = true;
         }
-
     }
 
     public void showFileStructure() {
