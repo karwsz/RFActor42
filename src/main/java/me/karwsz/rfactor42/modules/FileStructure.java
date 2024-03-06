@@ -36,9 +36,11 @@ public class FileStructure {
         return getFileDepth(file, 0);
     }
     private int getFileDepth(File file, int depth) {
+
         for (Map.Entry<File, ArrayList<File>> entry : fileTree.entrySet()) {
 
         }
+        return depth;
     }
 
     public void open(File directory) {
