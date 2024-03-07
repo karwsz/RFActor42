@@ -33,11 +33,16 @@ public class RFActorMenuBar extends JMenuBar {
         //===== Open =====
         JMenuItem openItem = new JMenuItem(Application.localized("open"));
         openItem.addActionListener((actionEvent) -> {
+            ModuleManager modules = Application.instance.moduleManager;
+            if (modules.projectInfo != null) {
+                if (JOptionPane.showConfirmDialog(Application.instance, Application.localized("open_project_warning")) != JOptionPane.OK_OPTION) {
+                    return;
+                }
+            }
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             int result = fileChooser.showOpenDialog(Application.instance);
             if (result == JFileChooser.APPROVE_OPTION && fileChooser.getSelectedFile() != null) {
-                ModuleManager modules = Application.instance.moduleManager;
                 modules.openProject(null, fileChooser.getSelectedFile());
             }
         });

@@ -11,8 +11,6 @@ public class FileComponent extends JLabel {
     public FileComponent(FileTreeElement file) {
         super(file.file().getName());
         this.file = file;
-        setBackground(Color.RED);
-        setOpaque(true);
         setVisible(true);
     }
 

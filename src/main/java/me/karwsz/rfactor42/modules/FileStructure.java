@@ -31,9 +31,9 @@ public class FileStructure {
 
 
     public void open(File directory) {
+        filesAmount = 0;
         this.parentDir = FileTreeElement.parent(directory);
         addAllChildrenToElement(parentDir);
-        gui.setComponents();
     }
 
     public static int MAX_FILES = 500;
@@ -53,9 +53,10 @@ public class FileStructure {
             ArrayList<FileTreeElement> fileRefs = new ArrayList<>();
             assert files != null;
             for (File child : files) {
-                fileRefs.add(new FileTreeElement(element, child));
+                FileTreeElement childElement = new FileTreeElement(element, child);
+                fileRefs.add(childElement);
                 if (child.isDirectory()) {
-                    addAllChildrenToElement(element);
+                    addAllChildrenToElement(childElement);
                 }
             }
             element.children().addAll(fileRefs);
@@ -90,16 +91,14 @@ public class FileStructure {
 
         public void setComponents() {
             gbc = new GridBagConstraints();
-            gbc.weightx = 1;
-            gbc.weighty = 1;
             gbc.gridy = 0;
             gbc.gridx = 0;
-            gbc.anchor = GridBagConstraints.PAGE_START;
-            gbc.gridwidth = 1;
-            gbc.gridheight = 1;
-            gbc.fill = GridBagConstraints.BOTH;
-            for (FileComponent fileComponent : fileComponents) {
-                remove(fileComponent);
+            gbc.weightx = 0;
+            gbc.weighty = 0;
+            gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+            gbc.fill = GridBagConstraints.NONE;
+            for (Component component : getComponents()) {
+                remove(component);
             }
             fileComponents.clear();
             for (FileTreeElement.FTEIterator it = fileStructure.parentDir.iterator(); it.hasNext(); ) {
@@ -111,6 +110,13 @@ public class FileStructure {
                 add(component, gbc);
                 gbc.gridy++;
             }
+            gbc.gridy++;
+            gbc.fill = GridBagConstraints.BOTH;
+            gbc.weightx = 1;
+            gbc.weighty = 1;
+            add(new JPanel(), gbc);
+            revalidate();
+            repaint();
         }
 
     }

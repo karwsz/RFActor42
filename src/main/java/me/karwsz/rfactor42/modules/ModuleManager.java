@@ -56,14 +56,22 @@ public class ModuleManager {
             showFileStructure();
             fileStructureInit = true;
         }
+        else {
+            fileStructure.gui.setComponents();
+        }
     }
 
     public void showFileStructure() {
         gbc.fill = GridBagConstraints.VERTICAL;
+        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
         gbc.weightx = 1;
         gbc.weighty = 1;
         fileStructure.gui.init();
-        container.add(new JScrollPane(fileStructure.gui), gbc);
+        fileStructure.gui.setComponents();
+        JScrollPane scrollPane = new JScrollPane(fileStructure.gui);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        container.add(scrollPane, gbc);
         container.revalidate();
     }
 
