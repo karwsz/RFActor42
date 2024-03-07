@@ -32,27 +32,30 @@ public class FileStructure {
 
     public void open(File directory) {
         this.parentDir = FileTreeElement.parent(directory);
-        processFTE(parentDir, 0);
+        addAllChildrenToElement(parentDir);
+        gui.setComponents();
     }
 
-    public static int MAX_FILES = 300;
+    public static int MAX_FILES = 500;
 
     int filesAmount = 0;
 
-    private void processFTE(FileTreeElement element, int depth) {
+    private void addAllChildrenToElement(FileTreeElement element) {
         filesAmount++;
         if (filesAmount > MAX_FILES) {
-            new ExceptionWindow(new IllegalStateException("Your project is too large! (more than " + MAX_FILES + ")"));
-            return;
+            IllegalStateException exception = new IllegalStateException("Your project is too large! (It's over " + MAX_FILES + "!)");
+            new ExceptionWindow(exception);
+            filesAmount = 0;
+            throw exception;
         }
         if (element.file().isDirectory()) {
             File[] files = element.file().listFiles();
             ArrayList<FileTreeElement> fileRefs = new ArrayList<>();
             assert files != null;
             for (File child : files) {
-                fileRefs.add(new FileTreeElement(child, depth, new ArrayList<>()));
+                fileRefs.add(new FileTreeElement(element, child));
                 if (child.isDirectory()) {
-                    processFTE(element, depth + 1);
+                    addAllChildrenToElement(element);
                 }
             }
             element.children().addAll(fileRefs);
@@ -70,22 +73,44 @@ public class FileStructure {
             this.fileStructure = fileStructure;
         }
 
+
         public void init() {
             setMinimumSize(new Dimension(150, 0));
             setPreferredSize(new Dimension(400, 0));
             setOpaque(true);
             setBorder(new LineBorder(UIManager.getColor("Component.borderColor")));
             setBackground(UIManager.getColor("Panel.background"));
+            setLayout(new GridBagLayout());
         }
 
 
-        int filesCount = 0;
-        int depth = 0;
+        private final ArrayList<FileComponent> fileComponents = new ArrayList<>();
 
-        private ArrayList<FileComponent> fileComponents = new ArrayList<>();
+        private GridBagConstraints gbc;
 
         public void setComponents() {
-
+            gbc = new GridBagConstraints();
+            gbc.weightx = 1;
+            gbc.weighty = 1;
+            gbc.gridy = 0;
+            gbc.gridx = 0;
+            gbc.anchor = GridBagConstraints.PAGE_START;
+            gbc.gridwidth = 1;
+            gbc.gridheight = 1;
+            gbc.fill = GridBagConstraints.BOTH;
+            for (FileComponent fileComponent : fileComponents) {
+                remove(fileComponent);
+            }
+            fileComponents.clear();
+            for (FileTreeElement.FTEIterator it = fileStructure.parentDir.iterator(); it.hasNext(); ) {
+                FileTreeElement element = it.next();
+                System.out.println(element.displayString());
+                FileComponent component = new FileComponent(element);
+                gbc.gridx = element.depth;
+                System.out.println(gbc.gridx + " | " + gbc.gridy);
+                add(component, gbc);
+                gbc.gridy++;
+            }
         }
 
     }

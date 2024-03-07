@@ -9,14 +9,14 @@ public class FileComponent extends JLabel {
     private final FileTreeElement file;
 
     public FileComponent(FileTreeElement file) {
+        super(file.file().getName());
         this.file = file;
+        setBackground(Color.RED);
+        setOpaque(true);
+        setVisible(true);
     }
 
-    @Override
-    public void paint(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setColor(UIManager.getColor("Label.foreground"));
-        g2d.drawString(file.file().getName(), getWidth() / 2, getHeight() / 2);
-        super.paint(g);
+    public FileTreeElement getFile() {
+        return file;
     }
 }
