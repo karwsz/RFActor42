@@ -5,6 +5,8 @@ import me.karwsz.rfactor42.objects.FileComponent;
 import me.karwsz.rfactor42.objects.FileTreeElement;
 
 import javax.swing.*;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.io.File;
@@ -38,7 +40,7 @@ public class FileStructure {
 
     public static int MAX_FILES = 500;
 
-    int filesAmount = 0;
+    int filesAmount;
 
     private void addAllChildrenToElement(FileTreeElement element) {
         filesAmount++;
@@ -76,37 +78,35 @@ public class FileStructure {
 
 
         public void init() {
-            setMinimumSize(new Dimension(150, 0));
-            setPreferredSize(new Dimension(400, 0));
             setOpaque(true);
-            setBorder(new LineBorder(UIManager.getColor("Component.borderColor")));
             setBackground(UIManager.getColor("Panel.background"));
+            setBorder(new LineBorder(UIManager.getColor("Component.borderColor")));
             setLayout(new GridBagLayout());
         }
 
+        @Override
+        public Dimension getPreferredSize() {
+            return new Dimension(0, fileComponents.size() * fileComponents.get(0).getPreferredSize().height);
+        }
 
         private final ArrayList<FileComponent> fileComponents = new ArrayList<>();
 
-        private GridBagConstraints gbc;
-
         public void setComponents() {
-            gbc = new GridBagConstraints();
+            GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridy = 0;
             gbc.gridx = 0;
             gbc.weightx = 0;
             gbc.weighty = 0;
-            gbc.anchor = GridBagConstraints.FIRST_LINE_START;
-            gbc.fill = GridBagConstraints.NONE;
+            gbc.anchor = GridBagConstraints.NORTHWEST;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
             for (Component component : getComponents()) {
                 remove(component);
             }
             fileComponents.clear();
-            for (FileTreeElement.FTEIterator it = fileStructure.parentDir.iterator(); it.hasNext(); ) {
+            for (FileTreeElement.FTEIterator it = fileStructure.parentDir.iterator(); it.hasNext();) {
                 FileTreeElement element = it.next();
-                System.out.println(element.displayString());
                 FileComponent component = new FileComponent(element);
-                gbc.gridx = element.depth;
-                System.out.println(gbc.gridx + " | " + gbc.gridy);
+                fileComponents.add(component);
                 add(component, gbc);
                 gbc.gridy++;
             }

@@ -7,10 +7,12 @@ import java.util.NoSuchElementException;
 
 public class FileTreeElement {
 
+    FileTreeElement parent;
     private final File file;
     public final int depth;
 
     public FileTreeElement(FileTreeElement parent, File file) {
+        this.parent = parent;
         this.file = file;
         this.depth = parent.depth + 1;
     }
@@ -41,11 +43,9 @@ public class FileTreeElement {
 
     public String displayString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("--".repeat(depth + 1));
-        if (file().isFile())
-            builder.append("f").append(file.getName());
-        else
-            builder.append("+").append(file.getName());
+        builder
+                //.append("  ".repeat(depth))
+                        .append(file.getName());
         return builder.toString();
     }
 

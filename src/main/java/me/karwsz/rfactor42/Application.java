@@ -59,6 +59,7 @@ public class Application extends JFrame {
 
 
     public Application() {
+        System.setProperty("awt.useSystemAAFontSettings","on");
         setTitle("RFActor42 level editor by Karwsz");
         init();
     }

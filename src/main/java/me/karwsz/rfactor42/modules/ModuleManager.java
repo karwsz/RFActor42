@@ -69,8 +69,10 @@ public class ModuleManager {
         fileStructure.gui.init();
         fileStructure.gui.setComponents();
         JScrollPane scrollPane = new JScrollPane(fileStructure.gui);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setMinimumSize(new Dimension(150, 0));
+        scrollPane.setPreferredSize(new Dimension(400, 0));
+        scrollPane.getVerticalScrollBar().setUnitIncrement(15);
+        scrollPane.getHorizontalScrollBar().setUnitIncrement(15);
         container.add(scrollPane, gbc);
         container.revalidate();
     }
