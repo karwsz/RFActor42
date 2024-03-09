@@ -5,6 +5,7 @@ import me.karwsz.rfactor42.debug.ExceptionWindow;
 import me.karwsz.rfactor42.objects.ProjectInfo;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.io.File;
 
@@ -62,7 +63,7 @@ public class ModuleManager {
     }
 
     public void showFileStructure() {
-        gbc.fill = GridBagConstraints.VERTICAL;
+        gbc.fill = GridBagConstraints.BOTH;
         gbc.anchor = GridBagConstraints.FIRST_LINE_START;
         gbc.weightx = 1;
         gbc.weighty = 1;
@@ -70,10 +71,15 @@ public class ModuleManager {
         fileStructure.gui.setComponents();
         JScrollPane scrollPane = new JScrollPane(fileStructure.gui);
         scrollPane.setMinimumSize(new Dimension(150, 0));
-        scrollPane.setPreferredSize(new Dimension(400, 0));
-        scrollPane.getVerticalScrollBar().setUnitIncrement(15);
-        scrollPane.getHorizontalScrollBar().setUnitIncrement(15);
-        container.add(scrollPane, gbc);
+        scrollPane.setPreferredSize(new Dimension(450, 0));
+        scrollPane.setMaximumSize(new Dimension(1000, 0));
+        scrollPane.getVerticalScrollBar().setUnitIncrement(30);
+        scrollPane.getHorizontalScrollBar().setUnitIncrement(30);
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollPane, new JPanel());
+        splitPane.setMaximumSize(new Dimension(800, 999));
+
+        container.add(splitPane, gbc);
         container.revalidate();
     }
 

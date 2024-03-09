@@ -22,6 +22,14 @@ public class FileTreeElement {
         this.depth = depth;
     }
 
+    public boolean isDirectory() {
+        return file.isDirectory();
+    }
+
+    public boolean isCONFile() {
+        return file.getName().endsWith(".con");
+    }
+
     private final ArrayList<FileTreeElement> children = new ArrayList<>();
 
     public ArrayList<FileTreeElement> children() {

@@ -5,6 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.font.FontRenderContext;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -19,6 +20,8 @@ public class FileComponent extends JLabel {
     }
 
     private void init() {
+
+
         setOpaque(true);
         setBackground(UIManager.getColor("Panel.background"));
         setVisible(true);
@@ -46,7 +49,7 @@ public class FileComponent extends JLabel {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(0, 25);
+        return new Dimension(prefWidth, 25);
     }
 
     public FileTreeElement getFile() {
@@ -67,9 +70,13 @@ public class FileComponent extends JLabel {
         }
         jetBrainsMono = jetBrainsMono.deriveFont( 11.75f);
 
+
         folderIcon = folderIcon.getScaledInstance(16, 16, Image.SCALE_REPLICATE);
 
+
     }
+
+    private int prefWidth = 0;
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -77,10 +84,14 @@ public class FileComponent extends JLabel {
         Graphics2D g2d = (Graphics2D) g;
 
         enableAntialias(g2d);
-        if (file.file().isDirectory()) g2d.drawImage(folderIcon, 5 + getDepthSpace() - folderIcon.getWidth(null) / 2 - 4, getHeight() / 2 - folderIcon.getHeight(null) / 2 + 1, null);
+        if (file.isDirectory()) g2d.drawImage(folderIcon, 5 + getDepthSpace() - folderIcon.getWidth(null) / 2 - 4, getHeight() / 2 - folderIcon.getHeight(null) / 2 + 1, null);
 
         g2d.setFont(jetBrainsMono);
         g2d.setColor(UIManager.getColor("Label.foreground"));
+
+        //TODO: find a way to make this outside of paintComponent, once
+        prefWidth = g2d.getFontMetrics().stringWidth(file.file().getName()) + 20 + getDepthSpace();
+
         g2d.drawString(file.file().getName(), 10 + getDepthSpace(), getHeight() / 2 + getFont().getSize() / 2);
     }
 

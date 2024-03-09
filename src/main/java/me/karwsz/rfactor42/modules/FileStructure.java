@@ -86,7 +86,11 @@ public class FileStructure {
 
         @Override
         public Dimension getPreferredSize() {
-            return new Dimension(0, fileComponents.size() * fileComponents.get(0).getPreferredSize().height);
+            int maxWidth = 0;
+            for (FileComponent fileComponent : fileComponents) {
+                if (fileComponent.getPreferredSize().width > maxWidth) maxWidth = fileComponent.getPreferredSize().width;
+            }
+            return new Dimension(maxWidth, fileComponents.size() * fileComponents.get(0).getPreferredSize().height);
         }
 
         private final ArrayList<FileComponent> fileComponents = new ArrayList<>();
