@@ -69,6 +69,13 @@ public class FileStructure {
         return parentDir;
     }
 
+    boolean conOnly = true;
+
+    public void toggleShowConFilesOnly() {
+        conOnly = !conOnly;
+        gui.setComponents();
+    }
+
     public static class FileStructureGUI extends JPanel {
 
         private final FileStructure fileStructure;
@@ -96,6 +103,7 @@ public class FileStructure {
         private final ArrayList<FileComponent> fileComponents = new ArrayList<>();
 
         public void setComponents() {
+            if (fileStructure.getParentDir() == null) return;
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridy = 0;
             gbc.gridx = 0;
@@ -109,6 +117,9 @@ public class FileStructure {
             fileComponents.clear();
             for (FileTreeElement.FTEIterator it = fileStructure.parentDir.iterator(); it.hasNext();) {
                 FileTreeElement element = it.next();
+                if (!element.isDirectory() && !element.isCONFile() && fileStructure.conOnly) {
+                    continue;
+                }
                 FileComponent component = new FileComponent(element);
                 fileComponents.add(component);
                 add(component, gbc);

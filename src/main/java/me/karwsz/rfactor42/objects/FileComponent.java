@@ -1,5 +1,8 @@
 package me.karwsz.rfactor42.objects;
 
+import me.karwsz.rfactor42.Application;
+import me.karwsz.rfactor42.debug.ExceptionWindow;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -7,7 +10,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
 
 public class FileComponent extends JLabel {
 
@@ -38,8 +42,27 @@ public class FileComponent extends JLabel {
                 setBackground(background);
                 repaint();
             }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (file.isCONFile() && e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
+                    Application.instance.moduleManager.getCONEditor().setText(readFully());
+                }
+            }
         });
     }
+
+    public String readFully() {
+        try {
+           return Files.readString(file.file().toPath());
+        } catch (
+                IOException e) {
+            RuntimeException runtimeException = new RuntimeException(e);
+            new ExceptionWindow(runtimeException);
+            throw runtimeException;
+        }
+    }
+
 
 
     @Override

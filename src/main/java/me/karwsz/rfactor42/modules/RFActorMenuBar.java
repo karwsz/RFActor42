@@ -6,6 +6,8 @@ import javax.swing.*;
 
 public class RFActorMenuBar extends JMenuBar {
 
+    private JCheckBoxMenuItem showConFilesOnly;
+
     public RFActorMenuBar() {
         init();
     }
@@ -49,7 +51,23 @@ public class RFActorMenuBar extends JMenuBar {
         fileMenu.add(openItem); // 'Open' end ; add to fileMenu
 
 
-        add(fileMenu); //
+        add(fileMenu); // end of 'File' ; add fileMenu
+
+        JMenu editMenu = new JMenu("Edit"); // start of 'Edit'
+        add(editMenu); // end of 'Edit' ; add editMenu
+
+        JMenu viewMenu = new JMenu("View"); // start of 'View'
+
+
+        //===== 'Show .con files only' =====
+        showConFilesOnly = new JCheckBoxMenuItem("Show .con files only");
+        showConFilesOnly.setState(true);
+        showConFilesOnly.addActionListener((actionEvent) -> {
+            Application.instance.moduleManager.fileStructure.toggleShowConFilesOnly();
+        });
+        viewMenu.add(showConFilesOnly); // end of 'Show .con files only' ; add to viewMenu
+
+        add(viewMenu); // end of 'View' ; add viewMenu
     }
 
 }

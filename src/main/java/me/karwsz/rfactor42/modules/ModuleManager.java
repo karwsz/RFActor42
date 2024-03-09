@@ -1,11 +1,9 @@
 package me.karwsz.rfactor42.modules;
 
-import me.karwsz.rfactor42.Application;
 import me.karwsz.rfactor42.debug.ExceptionWindow;
 import me.karwsz.rfactor42.objects.ProjectInfo;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.io.File;
 
@@ -14,6 +12,7 @@ public class ModuleManager {
 
     public ProjectInfo projectInfo;
     public FileStructure fileStructure;
+    private CONEditor conEditor;
 
     public ModuleManager() {
         this.fileStructure = new FileStructure();
@@ -54,7 +53,7 @@ public class ModuleManager {
 
     public void updateFileStructure() {
         if (!fileStructureInit) {
-            showFileStructure();
+            showEditingComponents();
             fileStructureInit = true;
         }
         else {
@@ -62,13 +61,14 @@ public class ModuleManager {
         }
     }
 
-    public void showFileStructure() {
+    private void showEditingComponents() {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.anchor = GridBagConstraints.FIRST_LINE_START;
-        gbc.weightx = 1;
+        gbc.weightx = 0.3;
         gbc.weighty = 1;
         fileStructure.gui.init();
         fileStructure.gui.setComponents();
+
         JScrollPane scrollPane = new JScrollPane(fileStructure.gui);
         scrollPane.setMinimumSize(new Dimension(150, 0));
         scrollPane.setPreferredSize(new Dimension(450, 0));
@@ -76,8 +76,19 @@ public class ModuleManager {
         scrollPane.getVerticalScrollBar().setUnitIncrement(30);
         scrollPane.getHorizontalScrollBar().setUnitIncrement(30);
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollPane, new JPanel());
+
+        conEditor = new CONEditor();
+
+        JScrollPane conScrollPane = new JScrollPane(conEditor);
+        conScrollPane.setMinimumSize(new Dimension(300, 0));
+        conScrollPane.setPreferredSize(new Dimension(500, 0));
+        conScrollPane.setMaximumSize(new Dimension(1000, 0));
+        conScrollPane.getVerticalScrollBar().setUnitIncrement(30);
+        conScrollPane.getHorizontalScrollBar().setUnitIncrement(30);
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollPane, conScrollPane);
         splitPane.setMaximumSize(new Dimension(800, 999));
+
 
         container.add(splitPane, gbc);
         container.revalidate();
@@ -85,4 +96,7 @@ public class ModuleManager {
 
 
 
+    public CONEditor getCONEditor() {
+        return conEditor;
+    }
 }
