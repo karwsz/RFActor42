@@ -3,7 +3,7 @@ package me.karwsz.rfactor42.modules;
 import javax.swing.*;
 import java.awt.*;
 
-public class CONEditor extends JTextPane {
+public class CONEditor extends JEditorPane {
 
     public CONEditor() {
         init();

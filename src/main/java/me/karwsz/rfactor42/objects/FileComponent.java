@@ -96,7 +96,6 @@ public class FileComponent extends JLabel {
 
         folderIcon = folderIcon.getScaledInstance(16, 16, Image.SCALE_REPLICATE);
 
-
     }
 
     private int prefWidth = 0;
@@ -108,6 +107,12 @@ public class FileComponent extends JLabel {
 
         enableAntialias(g2d);
         if (file.isDirectory()) g2d.drawImage(folderIcon, 5 + getDepthSpace() - folderIcon.getWidth(null) / 2 - 4, getHeight() / 2 - folderIcon.getHeight(null) / 2 + 1, null);
+        else if (file.isCONFile()) {
+            g2d.setColor(Color.decode("#009900"));
+            g2d.setFont(new Font(Font.DIALOG, Font.BOLD, 11));
+            int stringWidth = g2d.getFontMetrics().stringWidth("CON");
+            g2d.drawString("CON", 7 + getDepthSpace() - stringWidth, getHeight() / 2 + getFont().getSize() / 2);
+        }
 
         g2d.setFont(jetBrainsMono);
         g2d.setColor(UIManager.getColor("Label.foreground"));
