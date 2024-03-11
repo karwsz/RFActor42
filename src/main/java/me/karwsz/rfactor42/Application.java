@@ -3,6 +3,7 @@ package me.karwsz.rfactor42;
 import com.formdev.flatlaf.FlatDarculaLaf;
 import me.karwsz.rfactor42.debug.ExceptionWindow;
 import me.karwsz.rfactor42.modules.ModuleManager;
+import me.karwsz.rfactor42.objects.GlobalSettings;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -90,18 +91,22 @@ public class Application extends JFrame {
         this.moduleManager.attach(this.getContentPane());
     }
 
+    public static GlobalSettings globalSettings;
+
     public static void main(String[] args) {
 
-        //Defaults
-        FlatDarculaLaf.setup();
-        parseStartupParameter("locale", "en");
+        globalSettings = new GlobalSettings();
+        globalSettings.parseFromFile();
 
+        for (Map.Entry<String, String> parameters : globalSettings.settings.entrySet()) {
+            parseStartupParameter(parameters.getKey(), parameters.getValue());
+        }
 
         //Parse args
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.startsWith("+")) {
-                parseStartupParameter(arg.substring(1), i + 1< args.length ? args[i + 1] : null);
+                parseStartupParameter(arg.substring(1), i + 1 < args.length ? args[i + 1] : null);
             }
         }
 

@@ -4,6 +4,7 @@ import me.karwsz.rfactor42.Application;
 import me.karwsz.rfactor42.debug.ExceptionWindow;
 import me.karwsz.rfactor42.objects.FileComponent;
 import me.karwsz.rfactor42.objects.FileTreeElement;
+import me.karwsz.rfactor42.objects.ProjectSettings;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
@@ -72,12 +73,6 @@ public class FileStructure {
         return parentDir;
     }
 
-    boolean conOnly = true;
-
-    public void toggleShowConFilesOnly() {
-        conOnly = !conOnly;
-        gui.setComponents();
-    }
 
     public static class FileStructureGUI extends JPanel {
 
@@ -105,7 +100,7 @@ public class FileStructure {
 
             JMenuItem markAsBaseDir = new JMenuItem(Application.localized("markAsBase"));
             markAsBaseDir.addActionListener((event) -> {
-                Application.instance.moduleManager.projectSettings.setRFABaseDirectory(activeComponent);
+                Application.instance.moduleManager.projectSettings.setRFABaseDirectory(activeComponent.getFile().file());
                 repaint();
             });
 
@@ -138,7 +133,7 @@ public class FileStructure {
             fileComponents.clear();
             for (FileTreeElement.FTEIterator it = fileStructure.parentDir.iterator(); it.hasNext();) {
                 FileTreeElement element = it.next();
-                if (!element.isDirectory() && !element.isCONFile() && fileStructure.conOnly) {
+                if (!element.isDirectory() && !element.isCONFile() && ProjectSettings.instance().shouldShowConFilesOnly()) {
                     continue;
                 }
                 FileComponent component = createFileComponent(element);

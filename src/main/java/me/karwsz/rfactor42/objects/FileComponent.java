@@ -113,7 +113,7 @@ public class FileComponent extends JLabel {
 
         enableAntialias(g2d);
         if (file.isDirectory()) {
-            if (this.equals(ProjectSettings.instance().getRFABaseDirectory())) {
+            if (file.file().equals(ProjectSettings.instance().getRFABaseDirectory())) {
                 Map<TextAttribute, Object> attributes = (Map<TextAttribute, Object>) jetbrainsFont.getAttributes();
                 attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
                 jetbrainsFont = jetbrainsFont.deriveFont(attributes);

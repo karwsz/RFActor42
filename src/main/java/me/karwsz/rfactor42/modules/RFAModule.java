@@ -12,10 +12,6 @@ import java.io.*;
 //https://github.com/Ahrkylien/BF1942-Extraction-Readout-Scripts/
 public class RFAModule {
 
-    /**
-     *
-     */
-
     private static boolean packing = false;
 
     public static boolean isPacking() {
@@ -29,7 +25,7 @@ public class RFAModule {
             File outputFile = new File(parentDir.getAbsolutePath() + File.separator + parentDir.getName().toLowerCase().replaceAll(" ", "_") + ".rfa");
             outputFile.createNewFile();
             ProcessBuilder processBuilder = new ProcessBuilder("python", "./python/pack.py", parentDir.getAbsolutePath(), outputFile.getAbsolutePath(),
-                    settings.getRFABaseDirectory().getFile().file().getAbsolutePath(),
+                    settings.getRFABaseDirectory().getAbsolutePath(),
                     "" + compress);
             Process process = processBuilder.start();
             packing = true;
@@ -57,9 +53,6 @@ public class RFAModule {
         }
     }
 
-    /**
-     *
-     */
     public static void unpack(File file, File outputDir) {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder("python", "./python/unpack.py", file.getAbsolutePath(), outputDir.getAbsolutePath());

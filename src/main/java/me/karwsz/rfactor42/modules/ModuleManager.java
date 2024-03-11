@@ -1,6 +1,5 @@
 package me.karwsz.rfactor42.modules;
 
-import me.karwsz.rfactor42.Application;
 import me.karwsz.rfactor42.debug.ExceptionWindow;
 import me.karwsz.rfactor42.modules.filestructure.FileStructure;
 import me.karwsz.rfactor42.objects.ProjectSettings;
@@ -47,7 +46,10 @@ public class ModuleManager {
             projectSettings = new ProjectSettings(file);
         }
 
+        projectSettings.parseFile();
+
         RFActorMenuBar.compressCheckbox.setState(projectSettings.shouldCompress());
+        RFActorMenuBar.showConFilesOnly.setState(projectSettings.shouldShowConFilesOnly());
 
         fileStructure.open(file);
 

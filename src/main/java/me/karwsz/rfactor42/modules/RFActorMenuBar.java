@@ -75,7 +75,8 @@ public class RFActorMenuBar extends JMenuBar {
         showConFilesOnly = new JCheckBoxMenuItem(Application.localized("show_.con_files_only"));
         showConFilesOnly.setState(true);
         showConFilesOnly.addActionListener((actionEvent) -> {
-            Application.instance.moduleManager.fileStructure.toggleShowConFilesOnly();
+            ProjectSettings.instance().toggleShowConFilesOnly();
+            Application.instance.moduleManager.fileStructure.gui.setComponents();
         });
         viewMenu.add(showConFilesOnly); // end of 'Show .con files only' ; add to viewMenu
 

@@ -49,13 +49,6 @@ public class FileTreeElement {
         return !children().isEmpty();
     }
 
-    public String displayString() {
-        StringBuilder builder = new StringBuilder();
-        builder
-                //.append("  ".repeat(depth))
-                        .append(file.getName());
-        return builder.toString();
-    }
 
     public FTEIterator iterator() {
         return new FTEIterator();
@@ -102,19 +95,4 @@ public class FileTreeElement {
         }
     }
 
-    public static void testString() {
-        FileTreeElement parent = FileTreeElement.parent(new File("Test"));
-        for (int i = 0; i < 10; i++) {
-            FileTreeElement child = new FileTreeElement(parent, new File("" + i));
-            parent.children().add(child);
-            for (int j = 0; j < 3; j++) {
-                FileTreeElement grandchild = new FileTreeElement(child, new File("" + j));
-                child.children().add(grandchild);
-            }
-        }
-        for (FTEIterator it = parent.iterator(); it.hasNext(); ) {
-            FileTreeElement fte = it.next();
-            System.out.println(fte.displayString());
-        }
-    }
 }
