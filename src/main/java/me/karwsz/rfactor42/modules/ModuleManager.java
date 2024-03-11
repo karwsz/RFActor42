@@ -2,6 +2,7 @@ package me.karwsz.rfactor42.modules;
 
 import me.karwsz.rfactor42.debug.ExceptionWindow;
 import me.karwsz.rfactor42.objects.ProjectInfo;
+import me.karwsz.rfactor42.objects.ProjectSettings;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,11 +11,15 @@ import java.io.File;
 public class ModuleManager {
 
 
+    public RFActorMenuBar RFActorMenuBar;
+    public ProjectSettings projectSettings;
     public ProjectInfo projectInfo;
     public FileStructure fileStructure;
     private CONEditor conEditor;
 
     public ModuleManager() {
+        this.projectSettings = new ProjectSettings();
+        this.RFActorMenuBar = new RFActorMenuBar();
         this.fileStructure = new FileStructure();
     }
 

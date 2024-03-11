@@ -3,7 +3,6 @@ package me.karwsz.rfactor42;
 import com.formdev.flatlaf.FlatDarculaLaf;
 import me.karwsz.rfactor42.debug.ExceptionWindow;
 import me.karwsz.rfactor42.modules.ModuleManager;
-import me.karwsz.rfactor42.modules.RFActorMenuBar;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -75,8 +74,6 @@ public class Application extends JFrame {
         contentPane.setBorder(new EmptyBorder(new Insets(5, 10, 5, 10)));
         setContentPane(contentPane);
 
-        setJMenuBar(new RFActorMenuBar());
-
         initComponents();
 
         pack();
@@ -85,6 +82,7 @@ public class Application extends JFrame {
 
     private void initComponents() {
         this.moduleManager = new ModuleManager();
+        setJMenuBar(moduleManager.RFActorMenuBar);
         this.moduleManager.attach(this.getContentPane());
     }
 

@@ -6,7 +6,8 @@ import javax.swing.*;
 
 public class RFActorMenuBar extends JMenuBar {
 
-    private JCheckBoxMenuItem showConFilesOnly;
+    public JCheckBoxMenuItem showConFilesOnly;
+    public JCheckBoxMenuItem compressCheckbox;
 
     public RFActorMenuBar() {
         init();
@@ -53,14 +54,14 @@ public class RFActorMenuBar extends JMenuBar {
 
         add(fileMenu); // end of 'File' ; add fileMenu
 
-        JMenu editMenu = new JMenu("Edit"); // start of 'Edit'
+        JMenu editMenu = new JMenu(Application.localized("edit")); // start of 'Edit'
         add(editMenu); // end of 'Edit' ; add editMenu
 
-        JMenu viewMenu = new JMenu("View"); // start of 'View'
+        JMenu viewMenu = new JMenu(Application.localized("view")); // start of 'View'
 
 
         //===== 'Show .con files only' =====
-        showConFilesOnly = new JCheckBoxMenuItem("Show .con files only");
+        showConFilesOnly = new JCheckBoxMenuItem(Application.localized("show_.con_files_only"));
         showConFilesOnly.setState(true);
         showConFilesOnly.addActionListener((actionEvent) -> {
             Application.instance.moduleManager.fileStructure.toggleShowConFilesOnly();
@@ -68,6 +69,35 @@ public class RFActorMenuBar extends JMenuBar {
         viewMenu.add(showConFilesOnly); // end of 'Show .con files only' ; add to viewMenu
 
         add(viewMenu); // end of 'View' ; add viewMenu
+
+        //===== 'RFA' =====
+        JMenu rfaMenu = new JMenu("RFA");
+
+        JMenuItem packItem = new JMenuItem(Application.localized("pack"));
+        packItem.addActionListener((event) -> {
+            if (Application.instance.moduleManager.projectInfo == null) {
+                return;
+            }
+            RFAModule.pack(Application.instance.moduleManager.projectSettings.shouldCompress());
+        });
+
+        rfaMenu.add(packItem);
+        compressCheckbox = new JCheckBoxMenuItem(Application.localized("compress"));
+        compressCheckbox.addActionListener((event) -> {
+            Application.instance.moduleManager.projectSettings.setCompress(compressCheckbox.getState());
+        });
+        rfaMenu.add(compressCheckbox);
+
+        //===== SPECIAL THANKS =====
+        String specialThanks = "Possible thanks to henk's RFA.py - thanks henk!";
+        JMenuItem thanksItem = new JMenuItem(specialThanks);
+        JMenuItem dashItem = new JMenuItem("=".repeat(specialThanks.length()));
+        rfaMenu.add(new JMenuItem());
+        rfaMenu.add(dashItem);
+        rfaMenu.add(thanksItem);
+
+        add(rfaMenu); // end of 'RFA'
+
     }
 
 }
