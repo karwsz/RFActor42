@@ -1,6 +1,10 @@
 package me.karwsz.rfactor42.objects;
 
+import me.karwsz.rfactor42.debug.ExceptionWindow;
+
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -92,6 +96,17 @@ public class FileTreeElement {
                 return childIterator.next();
             }
             throw new NoSuchElementException();
+        }
+    }
+
+    public String readFully() {
+        try {
+            return Files.readString(file.toPath());
+        } catch (
+                IOException e) {
+            RuntimeException runtimeException = new RuntimeException(e);
+            new ExceptionWindow(runtimeException);
+            throw runtimeException;
         }
     }
 

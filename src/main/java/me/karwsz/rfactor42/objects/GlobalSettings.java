@@ -18,7 +18,8 @@ public class GlobalSettings {
             while ((line = bufferedReader.readLine()) != null) {
                 if (line.startsWith("+")) {
                     String[] keyVal = line.split(" ");
-                    settings.put(keyVal[0].substring(1), keyVal.length < 2 || "".equalsIgnoreCase(keyVal[1]) ? null : keyVal[1]);
+                    String key = keyVal[0].substring(1);
+                    settings.put(key, keyVal.length < 2 || "".equalsIgnoreCase(keyVal[1]) ? null : line.substring(key.length() + 2));
                 }
             }
         } catch (

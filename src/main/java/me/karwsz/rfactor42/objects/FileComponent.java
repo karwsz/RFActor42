@@ -50,21 +50,10 @@ public class FileComponent extends JLabel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (file.isCONFile() && e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
-                    Application.instance.moduleManager.getCONEditor().setText(readFully());
+                    Application.instance.moduleManager.getCONEditor().loadFile(file);
                 }
             }
         });
-    }
-
-    public String readFully() {
-        try {
-           return Files.readString(file.file().toPath());
-        } catch (
-                IOException e) {
-            RuntimeException runtimeException = new RuntimeException(e);
-            new ExceptionWindow(runtimeException);
-            throw runtimeException;
-        }
     }
 
 

@@ -40,6 +40,8 @@ public class FileStructure {
         filesAmount = 0;
         this.parentDir = FileTreeElement.parent(directory);
         addAllChildrenToElement(parentDir);
+        Application.globalSettings.settings.put("open", directory.getAbsolutePath());
+        Application.globalSettings.write();
     }
 
     public static int MAX_FILES = 500;

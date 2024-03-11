@@ -1,6 +1,5 @@
 package me.karwsz.rfactor42;
 
-import com.formdev.flatlaf.FlatDarculaLaf;
 import me.karwsz.rfactor42.debug.ExceptionWindow;
 import me.karwsz.rfactor42.modules.ModuleManager;
 import me.karwsz.rfactor42.objects.GlobalSettings;
@@ -8,6 +7,7 @@ import me.karwsz.rfactor42.objects.GlobalSettings;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.io.File;
 import java.util.*;
 
 public class Application extends JFrame {
@@ -18,6 +18,8 @@ public class Application extends JFrame {
     +locale <language> //for example +locale en, +locale pl, +locale de
     +theme Darcula/IntellIJ/Light/Dark //CASE SENSITIVE
      */
+
+    private static HashMap<String, Object> applicationParams = new HashMap<>();
 
     private static void parseStartupParameter(String key, String value) {
         switch (key.toLowerCase()) {
@@ -39,6 +41,13 @@ public class Application extends JFrame {
             case "theme" -> {
                 if (value == null) return;
                 setThemeFromString(value);
+            }
+            case "open" -> {
+                if (value == null) return;
+                File startDir = new File(value);
+                if (startDir.exists() && startDir.isDirectory()) {
+                    applicationParams.put(key, startDir);
+                }
             }
         }
     }
@@ -62,13 +71,14 @@ public class Application extends JFrame {
 
 
 
-    public Application() {
+    public Application(Map<String, Object> params) {
         System.setProperty("awt.useSystemAAFontSettings","on");
         setTitle("RFActor42 level editor by Karwsz");
-        init();
+        instance = this;
+        init(params);
     }
 
-    protected void init() {
+    protected void init(Map<String, Object> params) {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLocationByPlatform(true);
@@ -80,6 +90,10 @@ public class Application extends JFrame {
         setContentPane(contentPane);
 
         initComponents();
+
+        if (params.containsKey("open")) {
+            moduleManager.openProject((File) params.get("open"));
+        }
 
         pack();
         setVisible(true);
@@ -111,7 +125,7 @@ public class Application extends JFrame {
         }
 
         SwingUtilities.invokeLater(() -> {
-            instance = new Application();
+            new Application(applicationParams);
         });
     }
 
