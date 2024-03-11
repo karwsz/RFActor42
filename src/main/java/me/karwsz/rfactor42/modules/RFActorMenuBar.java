@@ -3,6 +3,8 @@ package me.karwsz.rfactor42.modules;
 import me.karwsz.rfactor42.Application;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import java.io.File;
 
 public class RFActorMenuBar extends JMenuBar {
 
@@ -73,6 +75,7 @@ public class RFActorMenuBar extends JMenuBar {
         //===== 'RFA' =====
         JMenu rfaMenu = new JMenu("RFA");
 
+        //===== 'Pack' =====
         JMenuItem packItem = new JMenuItem(Application.localized("pack"));
         packItem.addActionListener((event) -> {
             if (Application.instance.moduleManager.projectInfo == null) {
@@ -87,6 +90,46 @@ public class RFActorMenuBar extends JMenuBar {
             Application.instance.moduleManager.projectSettings.setCompress(compressCheckbox.getState());
         });
         rfaMenu.add(compressCheckbox);
+
+        //===== 'Unpack'
+        JMenuItem unpackItem = new JMenuItem(Application.localized("unpack"));
+        unpackItem.addActionListener((event) -> {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            fileChooser.setFileFilter(new FileFilter() {
+                @Override
+                public boolean accept(File f) {
+                    String[] parts = f.getName().split("[.]");
+                    return f.isDirectory() || parts[parts.length - 1].equalsIgnoreCase("rfa");
+                }
+
+                @Override
+                public String getDescription() {
+                    return Application.localized("rfaFiles");
+                }
+            });
+
+            int result = fileChooser.showOpenDialog(Application.instance);
+            File file = fileChooser.getSelectedFile();
+            if (result != JFileChooser.APPROVE_OPTION || file == null) {
+                return;
+            }
+            //Clone file to reuse file chooser
+            file = new File(file.getAbsolutePath());
+
+            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            fileChooser.resetChoosableFileFilters();
+
+            fileChooser.setDialogTitle(Application.localized("selectOutputDir"));
+            result = fileChooser.showOpenDialog(Application.instance);
+            File outputDir = fileChooser.getSelectedFile();
+            if (result != JFileChooser.APPROVE_OPTION || outputDir == null) {
+                return;
+            }
+
+            RFAModule.unpack(file, outputDir);
+        });
+        rfaMenu.add(unpackItem);
 
         //===== SPECIAL THANKS =====
         String specialThanks = "Possible thanks to henk's RFA.py - thanks henk!";

@@ -17,15 +17,26 @@ public class RFAModule {
     public static void pack(boolean compress) {
         File parentDir = Application.instance.moduleManager.projectInfo.openDir();
         try {
-            // ===== SETUP =====
-            ProcessBuilder processBuilder = new ProcessBuilder("python", "./python/pack.py", parentDir.getAbsolutePath(), parentDir.getAbsolutePath() + ".rfa", "" + compress);
-            Process p = processBuilder.start();
-
-//            BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
-
+            ProcessBuilder processBuilder = new ProcessBuilder("python", "./python/pack.py", parentDir.getAbsolutePath(), parentDir.getAbsolutePath().toLowerCase().replaceAll(" ", "_") + ".rfa", "" + compress);
+            processBuilder.start();
         } catch (IOException e) {
             new ExceptionWindow(e);
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     *
+     */
+    public static void unpack(File file, File outputDir) {
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder("python", "./python/unpack.py", file.getAbsolutePath(), outputDir.getAbsolutePath());
+            processBuilder.start();
+        } catch (IOException e) {
+            new ExceptionWindow(e);
+            throw new RuntimeException(e);
+        }
+    }
+
+
 }
