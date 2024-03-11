@@ -37,16 +37,20 @@ public class Application extends JFrame {
             }
             case "theme" -> {
                 if (value == null) return;
-                String className = "com.formdev.flatlaf.Flat" + value + "Laf";
-                try {
-                    UIManager.setLookAndFeel(className);
-                } catch (
-                        ClassNotFoundException |
-                        InstantiationException |
-                        IllegalAccessException |
-                        UnsupportedLookAndFeelException ignore) {
-                }
+                setThemeFromString(value);
             }
+        }
+    }
+
+    public static void setThemeFromString(String value) {
+        String className = "com.formdev.flatlaf.Flat" + value + "Laf";
+        try {
+            UIManager.setLookAndFeel(className);
+        } catch (
+                ClassNotFoundException |
+                InstantiationException |
+                IllegalAccessException |
+                UnsupportedLookAndFeelException ignore) {
         }
     }
 

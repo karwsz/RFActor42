@@ -1,7 +1,8 @@
 package me.karwsz.rfactor42.modules;
 
+import me.karwsz.rfactor42.Application;
 import me.karwsz.rfactor42.debug.ExceptionWindow;
-import me.karwsz.rfactor42.objects.ProjectInfo;
+import me.karwsz.rfactor42.modules.filestructure.FileStructure;
 import me.karwsz.rfactor42.objects.ProjectSettings;
 
 import javax.swing.*;
@@ -13,12 +14,10 @@ public class ModuleManager {
 
     public RFActorMenuBar RFActorMenuBar;
     public ProjectSettings projectSettings;
-    public ProjectInfo projectInfo;
     public FileStructure fileStructure;
     private CONEditor conEditor;
 
     public ModuleManager() {
-        this.projectSettings = new ProjectSettings();
         this.RFActorMenuBar = new RFActorMenuBar();
         this.fileStructure = new FileStructure();
     }
@@ -40,16 +39,15 @@ public class ModuleManager {
 
     private boolean fileStructureInit = false;
 
-    public void openProject(String name, File file) {
-        if (file == null) {
-            projectInfo = new ProjectInfo(name, "1.0", null);
-        }
-        else if (!file.exists()) {
+    public void openProject(File file) {
+        if (!file.exists()) {
             new ExceptionWindow(new IllegalArgumentException("File does not exist"));
         }
         else {
-            projectInfo = new ProjectInfo(name, "1.0", file);
+            projectSettings = new ProjectSettings(file);
         }
+
+        RFActorMenuBar.compressCheckbox.setState(projectSettings.shouldCompress());
 
         fileStructure.open(file);
 
@@ -98,8 +96,6 @@ public class ModuleManager {
         container.add(splitPane, gbc);
         container.revalidate();
     }
-
-
 
     public CONEditor getCONEditor() {
         return conEditor;

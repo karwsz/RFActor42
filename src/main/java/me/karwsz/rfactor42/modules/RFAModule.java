@@ -3,6 +3,7 @@ package me.karwsz.rfactor42.modules;
 
 import me.karwsz.rfactor42.Application;
 import me.karwsz.rfactor42.debug.ExceptionWindow;
+import me.karwsz.rfactor42.objects.ProjectSettings;
 
 import java.io.*;
 
@@ -14,11 +15,42 @@ public class RFAModule {
     /**
      *
      */
+
+    private static boolean packing = false;
+
+    public static boolean isPacking() {
+        return packing;
+    }
+
     public static void pack(boolean compress) {
-        File parentDir = Application.instance.moduleManager.projectInfo.openDir();
+        ProjectSettings settings = Application.instance.moduleManager.projectSettings;
+        File parentDir = Application.instance.moduleManager.projectSettings.parentDir();
         try {
-            ProcessBuilder processBuilder = new ProcessBuilder("python", "./python/pack.py", parentDir.getAbsolutePath(), parentDir.getAbsolutePath().toLowerCase().replaceAll(" ", "_") + ".rfa", "" + compress);
-            processBuilder.start();
+            File outputFile = new File(parentDir.getAbsolutePath() + File.separator + parentDir.getName().toLowerCase().replaceAll(" ", "_") + ".rfa");
+            outputFile.createNewFile();
+            ProcessBuilder processBuilder = new ProcessBuilder("python", "./python/pack.py", parentDir.getAbsolutePath(), outputFile.getAbsolutePath(),
+                    settings.getRFABaseDirectory().getFile().file().getAbsolutePath(),
+                    "" + compress);
+            Process process = processBuilder.start();
+            packing = true;
+            new Thread(() -> {
+                try {
+                    process.waitFor();
+                } catch (
+                        InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                try {
+                    String errors = new String(process.getErrorStream().readAllBytes());
+                    System.out.println(errors);
+                } catch (
+                        IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                packing = false;
+            }).start();
+
         } catch (IOException e) {
             new ExceptionWindow(e);
             throw new RuntimeException(e);

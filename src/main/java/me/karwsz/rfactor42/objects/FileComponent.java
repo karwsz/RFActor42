@@ -4,14 +4,18 @@ import me.karwsz.rfactor42.Application;
 import me.karwsz.rfactor42.debug.ExceptionWindow;
 
 import javax.imageio.ImageIO;
+import javax.management.Attribute;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
+import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
+import java.util.Map;
+import java.util.jar.Attributes;
 
 public class FileComponent extends JLabel {
 
@@ -105,8 +109,23 @@ public class FileComponent extends JLabel {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
+        Font jetbrainsFont = jetBrainsMono;
+
         enableAntialias(g2d);
-        if (file.isDirectory()) g2d.drawImage(folderIcon, 5 + getDepthSpace() - folderIcon.getWidth(null) / 2 - 4, getHeight() / 2 - folderIcon.getHeight(null) / 2 + 1, null);
+        if (file.isDirectory()) {
+            if (this.equals(ProjectSettings.instance().getRFABaseDirectory())) {
+                Map<TextAttribute, Object> attributes = (Map<TextAttribute, Object>) jetbrainsFont.getAttributes();
+                attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+                jetbrainsFont = jetbrainsFont.deriveFont(attributes);
+
+                g2d.setColor(new Color(239, 147, 38));
+                g2d.setFont(new Font(Font.DIALOG, Font.BOLD, 12));
+                int stringWidth = g2d.getFontMetrics().stringWidth("RFA");
+                g2d.drawString("RFA", 8 + getDepthSpace() - stringWidth, getHeight() / 2 + getFont().getSize() / 2);
+
+            }
+            else g2d.drawImage(folderIcon, 5 + getDepthSpace() - folderIcon.getWidth(null) / 2 - 4, getHeight() / 2 - folderIcon.getHeight(null) / 2 + 1, null);
+        }
         else if (file.isCONFile()) {
             g2d.setColor(Color.decode("#009900"));
             g2d.setFont(new Font(Font.DIALOG, Font.BOLD, 11));
@@ -114,11 +133,13 @@ public class FileComponent extends JLabel {
             g2d.drawString("CON", 7 + getDepthSpace() - stringWidth, getHeight() / 2 + getFont().getSize() / 2);
         }
 
-        g2d.setFont(jetBrainsMono);
+        g2d.setFont(jetbrainsFont);
         g2d.setColor(UIManager.getColor("Label.foreground"));
 
         //TODO: find a way to make this outside of paintComponent, once
         prefWidth = g2d.getFontMetrics().stringWidth(file.file().getName()) + 20 + getDepthSpace();
+
+
 
         g2d.drawString(file.file().getName(), 10 + getDepthSpace(), getHeight() / 2 + getFont().getSize() / 2);
     }

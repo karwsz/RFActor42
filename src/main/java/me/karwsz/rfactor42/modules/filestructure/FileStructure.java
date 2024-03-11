@@ -1,5 +1,6 @@
-package me.karwsz.rfactor42.modules;
+package me.karwsz.rfactor42.modules.filestructure;
 
+import me.karwsz.rfactor42.Application;
 import me.karwsz.rfactor42.debug.ExceptionWindow;
 import me.karwsz.rfactor42.objects.FileComponent;
 import me.karwsz.rfactor42.objects.FileTreeElement;
@@ -9,6 +10,8 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -79,6 +82,8 @@ public class FileStructure {
     public static class FileStructureGUI extends JPanel {
 
         private final FileStructure fileStructure;
+        private JPopupMenu dirPopupMenu;
+
         public FileStructureGUI(FileStructure fileStructure) {
             this.fileStructure = fileStructure;
         }
@@ -87,8 +92,24 @@ public class FileStructure {
         public void init() {
             setOpaque(true);
             setBackground(UIManager.getColor("Panel.background"));
-            setBorder(new LineBorder(UIManager.getColor("Component.borderColor")));
+            setBorder(new CompoundBorder(new LineBorder(UIManager.getColor("Component.borderColor")),
+                    new EmptyBorder(new Insets(0, 5, 0, 0))));
             setLayout(new GridBagLayout());
+            createDirectoryPopupMenu();
+        }
+
+        private FileComponent activeComponent;
+
+        private void createDirectoryPopupMenu() {
+            this.dirPopupMenu = new JPopupMenu();
+
+            JMenuItem markAsBaseDir = new JMenuItem(Application.localized("markAsBase"));
+            markAsBaseDir.addActionListener((event) -> {
+                Application.instance.moduleManager.projectSettings.setRFABaseDirectory(activeComponent);
+                repaint();
+            });
+
+            this.dirPopupMenu.add(markAsBaseDir);
         }
 
         @Override
@@ -120,7 +141,7 @@ public class FileStructure {
                 if (!element.isDirectory() && !element.isCONFile() && fileStructure.conOnly) {
                     continue;
                 }
-                FileComponent component = new FileComponent(element);
+                FileComponent component = createFileComponent(element);
                 fileComponents.add(component);
                 add(component, gbc);
                 gbc.gridy++;
@@ -132,6 +153,22 @@ public class FileStructure {
             add(new JPanel(), gbc);
             revalidate();
             repaint();
+        }
+
+        private FileComponent createFileComponent(FileTreeElement element) {
+            FileComponent component = new FileComponent(element);
+            if (element.isDirectory()) {
+                component.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (e.getButton() == MouseEvent.BUTTON3) {
+                            activeComponent = (FileComponent) e.getComponent();
+                        }
+                    }
+                });
+                component.setComponentPopupMenu(dirPopupMenu);
+            }
+            return component;
         }
 
     }

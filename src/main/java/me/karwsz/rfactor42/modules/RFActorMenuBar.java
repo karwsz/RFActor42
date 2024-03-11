@@ -1,6 +1,7 @@
 package me.karwsz.rfactor42.modules;
 
 import me.karwsz.rfactor42.Application;
+import me.karwsz.rfactor42.objects.ProjectSettings;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -18,37 +19,45 @@ public class RFActorMenuBar extends JMenuBar {
     protected void init() {
         JMenu fileMenu = new JMenu(Application.localized("file"));
 
+
+        //For now 'New' option seems rather unpractical as it has almost same functionality as 'Open' and probably won't be used
+        /*
         //====== New ======
         JMenuItem newItem = new JMenuItem(Application.localized("new"));
         newItem.addActionListener(actionEvent -> {
             ModuleManager modules = Application.instance.moduleManager;
-            if (modules.projectInfo != null) {
-                if (JOptionPane.showConfirmDialog(Application.instance, Application.localized("open_project_warning")) != JOptionPane.OK_OPTION) {
-                    return;
-                }
-            }
-            String name = JOptionPane.showInputDialog(Application.instance, Application.localized("open_project_ask_name"));
-            if ("".equalsIgnoreCase(name) || name == null) {
-                return;
-            }
-            modules.openProject(name, null);
-        });
-        fileMenu.add(newItem); // 'New' end ; add to fileMenu
-
-        //===== Open =====
-        JMenuItem openItem = new JMenuItem(Application.localized("open"));
-        openItem.addActionListener((actionEvent) -> {
-            ModuleManager modules = Application.instance.moduleManager;
-            if (modules.projectInfo != null) {
+            if (modules.projectSettings != null) {
                 if (JOptionPane.showConfirmDialog(Application.instance, Application.localized("open_project_warning")) != JOptionPane.OK_OPTION) {
                     return;
                 }
             }
             JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle(Application.localized("dirForProject"));
+            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            int result = fileChooser.showOpenDialog(Application.instance);
+            if (result != JFileChooser.APPROVE_OPTION || fileChooser.getSelectedFile() == null) {
+                return;
+            }
+            modules.openProject(fileChooser.getSelectedFile());
+        });
+        fileMenu.add(newItem); // 'New' end ; add to fileMenu
+         */
+
+        //===== Open =====
+        JMenuItem openItem = new JMenuItem(Application.localized("open"));
+        openItem.addActionListener((actionEvent) -> {
+            ModuleManager modules = Application.instance.moduleManager;
+            if (modules.projectSettings != null) {
+                if (JOptionPane.showConfirmDialog(Application.instance, Application.localized("open_project_warning")) != JOptionPane.OK_OPTION) {
+                    return;
+                }
+            }
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle(Application.localized("dirForProject"));
             fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             int result = fileChooser.showOpenDialog(Application.instance);
             if (result == JFileChooser.APPROVE_OPTION && fileChooser.getSelectedFile() != null) {
-                modules.openProject(null, fileChooser.getSelectedFile());
+                modules.openProject(fileChooser.getSelectedFile());
             }
         });
         fileMenu.add(openItem); // 'Open' end ; add to fileMenu
@@ -78,7 +87,16 @@ public class RFActorMenuBar extends JMenuBar {
         //===== 'Pack' =====
         JMenuItem packItem = new JMenuItem(Application.localized("pack"));
         packItem.addActionListener((event) -> {
-            if (Application.instance.moduleManager.projectInfo == null) {
+            if (ProjectSettings.instance() == null) {
+                JOptionPane.showMessageDialog(Application.instance, Application.localized("openProjectBeforeProceeding"));
+                return;
+            }
+            if (RFAModule.isPacking()) {
+                JOptionPane.showMessageDialog(Application.instance, Application.localized("busyPacking"));
+                return;
+            }
+            if (ProjectSettings.instance().getRFABaseDirectory() == null) {
+                JOptionPane.showMessageDialog(Application.instance, Application.localized("baseDirInstructions"));
                 return;
             }
             RFAModule.pack(Application.instance.moduleManager.projectSettings.shouldCompress());
@@ -86,12 +104,20 @@ public class RFActorMenuBar extends JMenuBar {
 
         rfaMenu.add(packItem);
         compressCheckbox = new JCheckBoxMenuItem(Application.localized("compress"));
+        compressCheckbox.setState(true);
         compressCheckbox.addActionListener((event) -> {
-            Application.instance.moduleManager.projectSettings.setCompress(compressCheckbox.getState());
+            ProjectSettings settings = Application.instance.moduleManager.projectSettings;
+            if (settings == null) {
+                JOptionPane.showMessageDialog(Application.instance, Application.localized("openProjectBeforeProceeding"));
+                compressCheckbox.setState(true);
+                return;
+            }
+            settings.setCompress(compressCheckbox.getState());
         });
-        rfaMenu.add(compressCheckbox);
 
-        //===== 'Unpack'
+        // ----- ! Compress checkbox is added after 'Unpack' option ! -----
+
+        //===== 'Unpack' =====
         JMenuItem unpackItem = new JMenuItem(Application.localized("unpack"));
         unpackItem.addActionListener((event) -> {
             JFileChooser fileChooser = new JFileChooser();
@@ -108,6 +134,7 @@ public class RFActorMenuBar extends JMenuBar {
                     return Application.localized("rfaFiles");
                 }
             });
+
 
             int result = fileChooser.showOpenDialog(Application.instance);
             File file = fileChooser.getSelectedFile();
@@ -129,7 +156,8 @@ public class RFActorMenuBar extends JMenuBar {
 
             RFAModule.unpack(file, outputDir);
         });
-        rfaMenu.add(unpackItem);
+        rfaMenu.add(unpackItem); // add 'Unpack' option to RFA menu
+        rfaMenu.add(compressCheckbox); // add 'Compress' checkbox
 
         //===== SPECIAL THANKS =====
         String specialThanks = "Possible thanks to henk's RFA.py - thanks henk!";
