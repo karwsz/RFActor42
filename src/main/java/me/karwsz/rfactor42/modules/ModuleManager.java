@@ -1,7 +1,6 @@
 package me.karwsz.rfactor42.modules;
 
 import me.karwsz.rfactor42.debug.ExceptionWindow;
-import me.karwsz.rfactor42.modules.filestructure.FileStructure;
 import me.karwsz.rfactor42.objects.ProjectSettings;
 
 import javax.swing.*;
@@ -16,9 +15,12 @@ public class ModuleManager {
     public FileStructure fileStructure;
     private CONEditor conEditor;
 
+    public TransferModule transferModule;
+
     public ModuleManager() {
         this.RFActorMenuBar = new RFActorMenuBar();
         this.fileStructure = new FileStructure();
+        this.transferModule = new TransferModule();
     }
 
     private final GridBagConstraints gbc = new GridBagConstraints();
@@ -52,6 +54,7 @@ public class ModuleManager {
         RFActorMenuBar.showConFilesOnly.setState(projectSettings.shouldShowConFilesOnly());
 
         fileStructure.open(file);
+        conEditor = new CONEditor();
 
         updateFileStructure();
     }

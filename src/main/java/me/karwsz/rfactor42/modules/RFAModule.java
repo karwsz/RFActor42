@@ -18,13 +18,21 @@ public class RFAModule {
         return packing;
     }
 
-    public static void pack(boolean compress) {
-        ProjectSettings settings = Application.instance.moduleManager.projectSettings;
+    public static File getOutputFile() {
         File parentDir = Application.instance.moduleManager.projectSettings.parentDir();
+        return new File(parentDir.getAbsolutePath() + File.separator + parentDir.getName().toLowerCase().replaceAll(" ", "_") + ".rfa");
+    }
+
+    public static void pack(boolean compress) {
+        pack(compress, null);
+    }
+
+    public static void pack(boolean compress, Runnable then) {
+        ProjectSettings settings = Application.instance.moduleManager.projectSettings;
         try {
-            File outputFile = new File(parentDir.getAbsolutePath() + File.separator + parentDir.getName().toLowerCase().replaceAll(" ", "_") + ".rfa");
+            File outputFile = getOutputFile();
             outputFile.createNewFile();
-            ProcessBuilder processBuilder = new ProcessBuilder("python", "./python/pack.py", parentDir.getAbsolutePath(), outputFile.getAbsolutePath(),
+            ProcessBuilder processBuilder = new ProcessBuilder("python", "./python/pack.py", ProjectSettings.instance().parentDir().getAbsolutePath(), outputFile.getAbsolutePath(),
                     settings.getRFABaseDirectory().getAbsolutePath(),
                     "" + compress);
             Process process = processBuilder.start();
@@ -37,6 +45,9 @@ public class RFAModule {
                     throw new RuntimeException(e);
                 }
                 try {
+                    if (then != null && process.exitValue() == 0) {
+                        then.run();
+                    }
                     String errors = new String(process.getErrorStream().readAllBytes());
                     System.out.println(errors);
                 } catch (

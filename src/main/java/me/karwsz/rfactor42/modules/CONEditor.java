@@ -1,29 +1,25 @@
 package me.karwsz.rfactor42.modules;
 
+import me.karwsz.rfactor42.objects.EditorSession;
 import me.karwsz.rfactor42.objects.FileTreeElement;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.UndoableEditEvent;
-import javax.swing.text.AbstractDocument;
-import javax.swing.text.Element;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
-import javax.swing.undo.UndoableEdit;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public class CONEditor extends JEditorPane {
 
 
-    private final HashMap<FileTreeElement, UndoManager> undoManagers = new HashMap<>();
+    private final ArrayList<EditorSession> sessions = new ArrayList<>();
 
-    UndoManager undoManager;
+    private EditorSession activeSession;
+
     public CONEditor() {
         init();
     }
@@ -35,6 +31,21 @@ public class CONEditor extends JEditorPane {
         setFont(getFont().deriveFont(15f));
 
         setupUndoRedo();
+        setupSave();
+    }
+
+    private void setupSave() {
+        KeyStroke saveKeystroke = KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK);
+        getInputMap().put(saveKeystroke, "saveKeystroke");
+        getActionMap().put("saveKeystroke", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (activeSession != null) {
+                    updateSession();
+                    activeSession.write();
+                }
+            }
+        });
     }
 
     private void setupUndoRedo() {
@@ -45,6 +56,7 @@ public class CONEditor extends JEditorPane {
         getActionMap().put("undoKeystroke", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                UndoManager undoManager = activeSession.getManager();
                 try {
                     if (undoManager.canUndo()) undoManager.undo();
                 } catch (CannotUndoException ignore) {}
@@ -55,6 +67,7 @@ public class CONEditor extends JEditorPane {
         getActionMap().put("redoKeystroke", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                UndoManager undoManager = activeSession.getManager();
                 try {
                     if (undoManager.canRedo()) undoManager.redo();
                 } catch (CannotRedoException ignore) {}
@@ -62,26 +75,31 @@ public class CONEditor extends JEditorPane {
         });
     }
 
+    public EditorSession getSession(FileTreeElement element) {
+        return sessions.stream().filter(editorSession -> editorSession.getElement().equals(element)).findAny().orElse(null);
+    }
+
+    public EditorSession getOrCreateSession(FileTreeElement fileTreeElement) {
+        EditorSession session = getSession(fileTreeElement);
+        if (session == null) {
+            session = new EditorSession(fileTreeElement);
+            sessions.add(session);
+        }
+        return session;
+    }
+
     public void loadFile(FileTreeElement file) {
-        getDocument().removeUndoableEditListener(undoManager);
-        undoManagers.putIfAbsent(file, new UndoManager() {
+        if (activeSession != null) {
+            getDocument().removeUndoableEditListener(activeSession.getManager());
+            updateSession();
+        }
 
-            @Override
-            public synchronized boolean addEdit(UndoableEdit anEdit) {
-                if (anEdit instanceof DocumentEvent event) {
-                    if (event.getLength() == 1) {
-                        Element element = getDocument().getDefaultRootElement();
-                        AbstractDocument.LeafElement content = (AbstractDocument.LeafElement) element.getElement(0);
+        activeSession = getOrCreateSession(file);
+        setText(activeSession.getText());
+        getDocument().addUndoableEditListener(activeSession.getManager());
+    }
 
-                        System.out.println(content.getClass());
-                    }
-                }
-                return super.addEdit(anEdit);
-            }
-        });
-        undoManager = undoManagers.get(file);
-        undoManager.setLimit(300);
-        setText(file.readFully());
-        getDocument().addUndoableEditListener(undoManager);
+    private void updateSession() {
+        activeSession.setText(getText());
     }
 }

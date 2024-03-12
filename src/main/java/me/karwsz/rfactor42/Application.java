@@ -3,6 +3,7 @@ package me.karwsz.rfactor42;
 import me.karwsz.rfactor42.debug.ExceptionWindow;
 import me.karwsz.rfactor42.modules.ModuleManager;
 import me.karwsz.rfactor42.objects.GlobalSettings;
+import me.karwsz.rfactor42.objects.SFTPCredentials;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -16,10 +17,10 @@ public class Application extends JFrame {
     Parameters list:
 
     +locale <language> //for example +locale en, +locale pl, +locale de
-    +theme Darcula/IntellIJ/Light/Dark //CASE SENSITIVE
+    +theme Darcula/IntelliJ/Light/Dark //CASE SENSITIVE
      */
 
-    private static HashMap<String, Object> applicationParams = new HashMap<>();
+    public static final HashMap<String, Object> applicationParams = new HashMap<>();
 
     private static void parseStartupParameter(String key, String value) {
         switch (key.toLowerCase()) {
@@ -48,6 +49,12 @@ public class Application extends JFrame {
                 if (startDir.exists() && startDir.isDirectory()) {
                     applicationParams.put(key, startDir);
                 }
+            }
+            case "credentials" -> {
+                if (value == null) return;
+                applicationParams.putIfAbsent("credentials", new ArrayList<>());
+                ArrayList<SFTPCredentials> credentials = (ArrayList<SFTPCredentials>) applicationParams.get("credentials");
+                credentials.add(SFTPCredentials.deserialize(value));
             }
         }
     }
@@ -91,12 +98,16 @@ public class Application extends JFrame {
 
         initComponents();
 
-        if (params.containsKey("open")) {
-            moduleManager.openProject((File) params.get("open"));
-        }
+        processParams();
 
         pack();
         setVisible(true);
+    }
+
+    private void processParams() {
+        if (Application.applicationParams.containsKey("open")) {
+            moduleManager.openProject((File) Application.applicationParams.get("open"));
+        }
     }
 
     private void initComponents() {

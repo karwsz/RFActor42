@@ -1,4 +1,4 @@
-package me.karwsz.rfactor42.modules.filestructure;
+package me.karwsz.rfactor42.modules;
 
 import me.karwsz.rfactor42.Application;
 import me.karwsz.rfactor42.debug.ExceptionWindow;

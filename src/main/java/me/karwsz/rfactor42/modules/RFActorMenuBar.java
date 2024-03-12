@@ -170,6 +170,18 @@ public class RFActorMenuBar extends JMenuBar {
 
         add(rfaMenu); // end of 'RFA'
 
+
+        //===== 'Transfer' =====
+        JMenu transferMenu = new JMenu(Application.localized("transfer"));
+        JMenuItem addCredentialsItem = new JMenuItem(Application.localized("credentials"));
+
+        addCredentialsItem.addActionListener((e) -> {
+            
+        });
+
+        transferMenu.add(addCredentialsItem); // 'Transfer' <- 'Credentials'
+
+        add(transferMenu); // end of 'Transfer'
     }
 
 }
