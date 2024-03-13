@@ -40,7 +40,7 @@ public class FileStructure {
         filesAmount = 0;
         this.parentDir = FileTreeElement.parent(directory);
         addAllChildrenToElement(parentDir);
-        Application.globalSettings.settings.put("open", directory.getAbsolutePath());
+        Application.globalSettings.addValue("open", directory.getAbsolutePath());
         Application.globalSettings.write();
     }
 

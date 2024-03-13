@@ -50,10 +50,10 @@ public class Application extends JFrame {
                     applicationParams.put(key, startDir);
                 }
             }
-            case "credentials" -> {
+            case "addcredentials" -> {
                 if (value == null) return;
-                applicationParams.putIfAbsent("credentials", new ArrayList<>());
-                ArrayList<SFTPCredentials> credentials = (ArrayList<SFTPCredentials>) applicationParams.get("credentials");
+                applicationParams.putIfAbsent("addcredentials", new ArrayList<>());
+                ArrayList<SFTPCredentials> credentials = (ArrayList<SFTPCredentials>) applicationParams.get("addcredentials");
                 credentials.add(SFTPCredentials.deserialize(value));
             }
         }
@@ -123,8 +123,10 @@ public class Application extends JFrame {
         globalSettings = new GlobalSettings();
         globalSettings.parseFromFile();
 
-        for (Map.Entry<String, String> parameters : globalSettings.settings.entrySet()) {
-            parseStartupParameter(parameters.getKey(), parameters.getValue());
+        for (Map.Entry<String, ArrayList<String>> parameters : globalSettings.getSettings()) {
+            for (String value : parameters.getValue()) {
+                parseStartupParameter(parameters.getKey(), value);
+            }
         }
 
         //Parse args
