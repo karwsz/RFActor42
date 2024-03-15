@@ -26,7 +26,7 @@ public class CONEditor extends JEditorPane {
 
     protected void init() {
         setForeground(UIManager.getColor("TextArea.foreground"));
-        setBackground(UIManager.getColor("TextArea.background"));
+        setBackground(UIManager.getColor("TextArea.focusedBackground"));
         setMargin(new Insets(5, 10, 5, 5));
         setFont(getFont().deriveFont(15f));
 

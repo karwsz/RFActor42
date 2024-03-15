@@ -11,6 +11,7 @@ public record SFTPCredentials(String host, int port, String user, String passwor
     }
 
     public static SFTPCredentials deserialize(String string) {
+        if (string == null) return null;
         Pattern pattern = Pattern.compile("^\"(.*?)\" ([0-9].*?) \"(.*?)\" \"(.*?)\"$");
         Matcher matcher = pattern.matcher(string);
         if (!matcher.find()) {

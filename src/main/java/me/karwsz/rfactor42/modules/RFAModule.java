@@ -10,6 +10,8 @@ import java.io.*;
 
 //Possible thanks to henk's scripts
 //https://github.com/Ahrkylien/BF1942-Extraction-Readout-Scripts/
+
+//TODO: add remove server files option
 public class RFAModule {
 
     private static boolean packing = false;
@@ -52,6 +54,7 @@ public class RFAModule {
                     System.out.println(errors);
                 } catch (
                         IOException e) {
+                    packing = false;
                     throw new RuntimeException(e);
                 }
 

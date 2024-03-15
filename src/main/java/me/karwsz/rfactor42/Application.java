@@ -101,6 +101,7 @@ public class Application extends JFrame {
         processParams();
 
         pack();
+        centerWindow(this);
         setVisible(true);
     }
 
@@ -156,6 +157,11 @@ public class Application extends JFrame {
             new ExceptionWindow(e);
             throw e;
         }
+    }
+
+    public static void centerWindow(JFrame frame) {
+        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+        frame.setLocation(dimension.width / 2 - frame.getWidth() / 2, dimension.height / 2 - frame.getHeight() / 2);
     }
 
 }

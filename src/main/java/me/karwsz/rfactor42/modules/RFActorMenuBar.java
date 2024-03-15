@@ -173,13 +173,25 @@ public class RFActorMenuBar extends JMenuBar {
 
         //===== 'Transfer' =====
         JMenu transferMenu = new JMenu(Application.localized("transfer"));
-        JMenuItem addCredentialsItem = new JMenuItem(Application.localized("addcredentials"));
 
+        //===== 'Credentials' =====
+        JMenuItem addCredentialsItem = new JMenuItem(Application.localized("addcredentials"));
         addCredentialsItem.addActionListener((e) -> {
             TransferModule.CredentialsManagerGUI.get().setVisible(true);
         });
-
         transferMenu.add(addCredentialsItem); // 'Transfer' <- 'Credentials'
+
+        //===== 'Send' =====
+        JMenuItem sendItem = new JMenuItem(Application.localized("send"));
+        sendItem.addActionListener((e) -> {
+            if (Application.instance.moduleManager.projectSettings == null) {
+                JOptionPane.showMessageDialog(null, Application.localized("openProjectBeforeProceeding"));
+                return;
+            }
+            TransferModule.showSendGUI();
+        });
+        transferMenu.add(sendItem); // 'Transfer' <- 'Send'
+
 
         add(transferMenu); // end of 'Transfer'
     }

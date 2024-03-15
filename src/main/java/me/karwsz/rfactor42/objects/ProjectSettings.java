@@ -1,15 +1,18 @@
 package me.karwsz.rfactor42.objects;
 
 import me.karwsz.rfactor42.Application;
+import me.karwsz.rfactor42.modules.RFAModule;
 
 import java.io.*;
 import java.util.HashMap;
 
 public class ProjectSettings {
-    private File parentDir;
+    private final File parentDir;
     private File baseDirectory = null;
 
     private boolean showConFilesOnly = true;
+    private String lastTargetFile;
+    private String selectedHost;
 
     public ProjectSettings(File parentDir) {
         this.parentDir = parentDir;
@@ -68,6 +71,11 @@ public class ProjectSettings {
         this.baseDirectory = baseDirString != null && !baseDirString.isBlank() ? new File(baseDirString) : null;
         this.compress = Boolean.parseBoolean(settings.getOrDefault("compress", "true"));
         this.showConFilesOnly = Boolean.parseBoolean(settings.getOrDefault("showConFilesOnly", "true"));
+        String lastTargetFileString = settings.getOrDefault("lastFileTarget", null);
+        this.lastTargetFile = lastTargetFileString != null ? lastTargetFileString : "/home/example/bf1942/mods/bf1942/archives/bf1942/levels/" + RFAModule.getOutputFile().getName();
+
+        this.selectedHost = settings.getOrDefault("selectedHost", null);
+
 
         write();
     }
@@ -84,6 +92,9 @@ public class ProjectSettings {
             fileWriter.append("+RFAbase").append(" ").append(getRFABaseDirectory() == null ? "" : getRFABaseDirectory().getAbsolutePath()).append("\n");
             fileWriter.append("+compress").append(" ").append(((Boolean) compress).toString()).append("\n");
             fileWriter.append("+showConFilesOnly").append(" ").append(((Boolean) showConFilesOnly).toString()).append("\n");
+
+            if (lastTargetFile != null) fileWriter.append("+lastFileTarget").append(" ").append((lastTargetFile)).append("\n");
+            if (selectedHost != null) fileWriter.append("+selectedHost").append(" ").append((selectedHost)).append("\n");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -98,5 +109,23 @@ public class ProjectSettings {
 
     public boolean shouldShowConFilesOnly() {
         return showConFilesOnly;
+    }
+
+    public String getLastTargetFile() {
+        return lastTargetFile;
+    }
+
+    public void setLastTargetFile(String lastTargetFile) {
+        this.lastTargetFile = lastTargetFile;
+        write();
+    }
+
+    public String getSelectedHost() {
+        return selectedHost;
+    }
+
+    public void setSelectedHost(SFTPCredentials selectedHost) {
+        this.selectedHost = selectedHost.serialize();
+        write();
     }
 }

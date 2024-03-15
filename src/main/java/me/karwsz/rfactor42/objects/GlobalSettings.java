@@ -54,6 +54,7 @@ public class GlobalSettings {
     }
 
     private ArrayList<String> getValues(String key) {
+        key = key.toLowerCase();
         return settings.getOrDefault(key, new ArrayList<>());
     }
 
@@ -85,7 +86,7 @@ public class GlobalSettings {
     }
 
     private StoreStrategy getStrategy(String key) {
-        return keyStrategies.getOrDefault(key, StoreStrategy.REMOVE_DUPLICATES);
+        return keyStrategies.getOrDefault(key, StoreStrategy.ALLOW_ONE);
     }
     private int getFlags(String key) {
         return keyFlags.getOrDefault(key, 0);
@@ -93,6 +94,12 @@ public class GlobalSettings {
 
     public Iterable<? extends Map.Entry<String, ArrayList<String>>> getSettings() {
         return settings.entrySet();
+    }
+
+    public void removeValue(String key, String value) {
+        key = key.toLowerCase();
+        getValues(key).removeIf(v -> v.equals(value));
+        write();
     }
 
     enum StoreFlags {
