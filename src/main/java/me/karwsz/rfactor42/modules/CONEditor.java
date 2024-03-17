@@ -34,6 +34,12 @@ public class CONEditor extends JEditorPane {
         setupSave();
     }
 
+    public void reset() {
+        sessions.clear();
+        activeSession = null;
+        setText("");
+    }
+
     private void setupSave() {
         KeyStroke saveKeystroke = KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK);
         getInputMap().put(saveKeystroke, "saveKeystroke");

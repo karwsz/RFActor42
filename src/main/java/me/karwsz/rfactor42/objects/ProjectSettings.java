@@ -13,6 +13,7 @@ public class ProjectSettings {
     private boolean showConFilesOnly = true;
     private String lastTargetFile;
     private String selectedHost;
+    private boolean shouldRemoveNonServer;
 
     public ProjectSettings(File parentDir) {
         this.parentDir = parentDir;
@@ -73,9 +74,8 @@ public class ProjectSettings {
         this.showConFilesOnly = Boolean.parseBoolean(settings.getOrDefault("showConFilesOnly", "true"));
         String lastTargetFileString = settings.getOrDefault("lastFileTarget", null);
         this.lastTargetFile = lastTargetFileString != null ? lastTargetFileString : "/home/example/bf1942/mods/bf1942/archives/bf1942/levels/" + RFAModule.getOutputFile().getName();
-
         this.selectedHost = settings.getOrDefault("selectedHost", null);
-
+        this.shouldRemoveNonServer = Boolean.parseBoolean(settings.getOrDefault("removeNonServer", "false"));
 
         write();
     }
@@ -91,6 +91,7 @@ public class ProjectSettings {
         try (FileWriter fileWriter = new FileWriter(settingsFile)) {
             fileWriter.append("+RFAbase").append(" ").append(getRFABaseDirectory() == null ? "" : getRFABaseDirectory().getAbsolutePath()).append("\n");
             fileWriter.append("+compress").append(" ").append(((Boolean) compress).toString()).append("\n");
+            fileWriter.append("+removeNonServer").append(" ").append(((Boolean) shouldRemoveNonServer).toString()).append("\n");
             fileWriter.append("+showConFilesOnly").append(" ").append(((Boolean) showConFilesOnly).toString()).append("\n");
 
             if (lastTargetFile != null) fileWriter.append("+lastFileTarget").append(" ").append((lastTargetFile)).append("\n");
@@ -127,5 +128,13 @@ public class ProjectSettings {
     public void setSelectedHost(SFTPCredentials selectedHost) {
         this.selectedHost = selectedHost.serialize();
         write();
+    }
+
+    public void setRemoveNonServer(boolean state) {
+        this.shouldRemoveNonServer = state;
+    }
+
+    public boolean shouldRemoveNonServer() {
+        return shouldRemoveNonServer;
     }
 }

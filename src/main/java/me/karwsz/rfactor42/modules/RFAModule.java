@@ -25,18 +25,18 @@ public class RFAModule {
         return new File(parentDir.getAbsolutePath() + File.separator + parentDir.getName().toLowerCase().replaceAll(" ", "_") + ".rfa");
     }
 
-    public static void pack(boolean compress) {
-        pack(compress, null);
+    public static void pack(boolean compress, boolean removeNonServer) {
+        pack(compress, removeNonServer,null);
     }
 
-    public static void pack(boolean compress, Runnable then) {
+    public static void pack(boolean compress, boolean removeNonServer, Runnable then) {
         ProjectSettings settings = Application.instance.moduleManager.projectSettings;
         try {
             File outputFile = getOutputFile();
             outputFile.createNewFile();
             ProcessBuilder processBuilder = new ProcessBuilder("python", "./python/pack.py", ProjectSettings.instance().parentDir().getAbsolutePath(), outputFile.getAbsolutePath(),
                     settings.getRFABaseDirectory().getAbsolutePath(),
-                    "" + compress);
+                    "" + compress, "" + removeNonServer);
             Process process = processBuilder.start();
             packing = true;
             new Thread(() -> {

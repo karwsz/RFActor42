@@ -11,6 +11,7 @@ public class RFActorMenuBar extends JMenuBar {
 
     public JCheckBoxMenuItem showConFilesOnly;
     public JCheckBoxMenuItem compressCheckbox;
+    JCheckBoxMenuItem removeNonServerCheckbox;
 
     public RFActorMenuBar() {
         init();
@@ -100,10 +101,14 @@ public class RFActorMenuBar extends JMenuBar {
                 JOptionPane.showMessageDialog(Application.instance, Application.localized("baseDirInstructions"));
                 return;
             }
-            RFAModule.pack(Application.instance.moduleManager.projectSettings.shouldCompress());
+            RFAModule.pack(ProjectSettings.instance().shouldCompress(), ProjectSettings.instance().shouldRemoveNonServer(), () -> {
+                JOptionPane.showMessageDialog(Application.instance, Application.localized("packDone"), "", JOptionPane.PLAIN_MESSAGE);
+            });
         });
 
         rfaMenu.add(packItem);
+        
+        //===== 'Compress' =====
         compressCheckbox = new JCheckBoxMenuItem(Application.localized("compress"));
         compressCheckbox.setState(true);
         compressCheckbox.addActionListener((event) -> {
@@ -115,8 +120,22 @@ public class RFActorMenuBar extends JMenuBar {
             }
             settings.setCompress(compressCheckbox.getState());
         });
+        
+        //===== 'Remove non-server files?' =====
 
-        // ----- ! Compress checkbox is added after 'Unpack' option ! -----
+        removeNonServerCheckbox = new JCheckBoxMenuItem(Application.localized("removeNonServer"));
+        removeNonServerCheckbox.setState(true);
+        removeNonServerCheckbox.addActionListener((event) -> {
+            ProjectSettings settings = ProjectSettings.instance();
+            if (settings == null) {
+                JOptionPane.showMessageDialog(Application.instance, Application.localized("openProjectBeforeProceeding"));
+                removeNonServerCheckbox.setState(true);
+                return;
+            }
+            settings.setRemoveNonServer(removeNonServerCheckbox.getState());
+        });
+
+        // ----- ! Compress and Remove non-server checkboxes are  added after 'Unpack' option ! -----
 
         //===== 'Unpack' =====
         JMenuItem unpackItem = new JMenuItem(Application.localized("unpack"));
@@ -159,6 +178,7 @@ public class RFActorMenuBar extends JMenuBar {
         });
         rfaMenu.add(unpackItem); // add 'Unpack' option to RFA menu
         rfaMenu.add(compressCheckbox); // add 'Compress' checkbox
+        rfaMenu.add(removeNonServerCheckbox); // add 'Remove non-server' checkbox
 
         //===== SPECIAL THANKS =====
         String specialThanks = "Possible thanks to henk's RFA.py - thanks henk!";

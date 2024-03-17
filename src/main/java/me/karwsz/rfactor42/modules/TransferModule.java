@@ -34,9 +34,9 @@ public class TransferModule {
 
     public static void packAndSend(SFTPCredentials credentials, String remoteFile) {
         File file = RFAModule.getOutputFile();
-        RFAModule.pack(true, () -> {
+        RFAModule.pack(true, ProjectSettings.instance().shouldRemoveNonServer(), () -> {
             send(credentials, file, remoteFile);
-            JOptionPane.showMessageDialog(Application.instance, "Transfer complete", "", JOptionPane.PLAIN_MESSAGE);
+            JOptionPane.showMessageDialog(Application.instance, Application.localized("transferDone"), "", JOptionPane.PLAIN_MESSAGE);
         });
     }
 

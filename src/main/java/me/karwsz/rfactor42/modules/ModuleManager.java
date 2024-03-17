@@ -51,10 +51,12 @@ public class ModuleManager {
         projectSettings.parseFile();
 
         RFActorMenuBar.compressCheckbox.setState(projectSettings.shouldCompress());
+        RFActorMenuBar.removeNonServerCheckbox.setState(projectSettings.shouldRemoveNonServer());
         RFActorMenuBar.showConFilesOnly.setState(projectSettings.shouldShowConFilesOnly());
 
         fileStructure.open(file);
-        conEditor = new CONEditor();
+
+        if (conEditor != null) conEditor.reset();
 
         updateFileStructure();
     }
