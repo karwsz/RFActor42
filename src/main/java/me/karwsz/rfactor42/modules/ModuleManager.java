@@ -89,14 +89,9 @@ public class ModuleManager {
 
         conEditor = new CONEditor();
 
-        JScrollPane conScrollPane = new JScrollPane(conEditor);
-        conScrollPane.setMinimumSize(new Dimension(300, 0));
-        conScrollPane.setPreferredSize(new Dimension(500, 0));
-        conScrollPane.setMaximumSize(new Dimension(1000, 0));
-        conScrollPane.getVerticalScrollBar().setUnitIncrement(15);
-        conScrollPane.getHorizontalScrollBar().setUnitIncrement(15);
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollPane, conScrollPane);
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollPane, conEditor);
         splitPane.setMaximumSize(new Dimension(800, 999));
 
 

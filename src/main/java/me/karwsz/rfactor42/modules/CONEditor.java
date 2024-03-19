@@ -13,37 +13,64 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-public class CONEditor extends JEditorPane {
+public class CONEditor extends JPanel {
 
 
     private final ArrayList<EditorSession> sessions = new ArrayList<>();
 
     private EditorSession activeSession;
+    private JScrollPane editorScrollPane;
+    private JEditorPane editorPane;
 
     public CONEditor() {
         init();
     }
 
     protected void init() {
-        setForeground(UIManager.getColor("TextArea.foreground"));
-        setBackground(UIManager.getColor("TextArea.focusedBackground"));
-        setMargin(new Insets(5, 10, 5, 5));
-        setFont(getFont().deriveFont(15f));
+        setMinimumSize(new Dimension(300, 0));
+        setPreferredSize(new Dimension(500, 0));
+        setMaximumSize(new Dimension(1000, 0));
+
+        this.editorPane = new JEditorPane() {
+            @Override
+            public Dimension getPreferredSize() {
+                Dimension pref = super.getPreferredSize();
+                return new Dimension(pref.width - editorScrollPane.getHorizontalScrollBar().getWidth(), pref.height);
+            }
+        };
+        editorPane.setForeground(UIManager.getColor("TextArea.foreground"));
+        editorPane.setBackground(UIManager.getColor("TextArea.focusedBackground"));
+        editorPane.setMargin(new Insets(5, 10, 5, 5));
+        editorPane.setFont(getFont().deriveFont(15f));
+        editorPane.setOpaque(true);
 
         setupUndoRedo();
         setupSave();
+
+        setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.weightx = 1;
+        gbc.weighty = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+
+        editorScrollPane = new JScrollPane(editorPane);
+        editorScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        editorScrollPane.getVerticalScrollBar().setUnitIncrement(15);
+        editorScrollPane.getHorizontalScrollBar().setUnitIncrement(15);
+
+        add(editorScrollPane, gbc);
     }
 
     public void reset() {
         sessions.clear();
         activeSession = null;
-        setText("");
+        editorPane.setText("");
     }
 
     private void setupSave() {
         KeyStroke saveKeystroke = KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK);
-        getInputMap().put(saveKeystroke, "saveKeystroke");
-        getActionMap().put("saveKeystroke", new AbstractAction() {
+        editorPane.getInputMap().put(saveKeystroke, "saveKeystroke");
+        editorPane.getActionMap().put("saveKeystroke", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (activeSession != null) {
@@ -58,8 +85,8 @@ public class CONEditor extends JEditorPane {
         KeyStroke undoKeystroke = KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK);
         KeyStroke redoKeystroke = KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK);
 
-        getInputMap().put(undoKeystroke, "undoKeystroke");
-        getActionMap().put("undoKeystroke", new AbstractAction() {
+        editorPane.getInputMap().put(undoKeystroke, "undoKeystroke");
+        editorPane.getActionMap().put("undoKeystroke", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 UndoManager undoManager = activeSession.getManager();
@@ -69,8 +96,8 @@ public class CONEditor extends JEditorPane {
             }
         });
 
-        getInputMap().put(redoKeystroke, "redoKeystroke");
-        getActionMap().put("redoKeystroke", new AbstractAction() {
+        editorPane.getInputMap().put(redoKeystroke, "redoKeystroke");
+        editorPane.getActionMap().put("redoKeystroke", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 UndoManager undoManager = activeSession.getManager();
@@ -96,16 +123,23 @@ public class CONEditor extends JEditorPane {
 
     public void loadFile(FileTreeElement file) {
         if (activeSession != null) {
-            getDocument().removeUndoableEditListener(activeSession.getManager());
+            editorPane.getDocument().removeUndoableEditListener(activeSession.getManager());
             updateSession();
         }
 
         activeSession = getOrCreateSession(file);
-        setText(activeSession.getText());
-        getDocument().addUndoableEditListener(activeSession.getManager());
+
+        editorPane.setText(activeSession.getText());
+        editorPane.getDocument().addUndoableEditListener(activeSession.getManager());
+
+        //Setting value on main thread causes it to revert to other value
+        SwingUtilities.invokeLater(() -> {
+            editorScrollPane.getVerticalScrollBar().setValue(activeSession.getVerticalScrollValue());
+        });
     }
 
     private void updateSession() {
-        activeSession.setText(getText());
+        activeSession.setText(editorPane.getText());
+        activeSession.setVerticalScrollValue(editorScrollPane.getVerticalScrollBar().getValue());
     }
 }
