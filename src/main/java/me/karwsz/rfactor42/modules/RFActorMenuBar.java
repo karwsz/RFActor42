@@ -12,6 +12,7 @@ public class RFActorMenuBar extends JMenuBar {
     public JCheckBoxMenuItem showConFilesOnly;
     public JCheckBoxMenuItem compressCheckbox;
     JCheckBoxMenuItem removeNonServerCheckbox;
+    private JMenu openRecentMenu;
 
     public RFActorMenuBar() {
         init();
@@ -63,6 +64,9 @@ public class RFActorMenuBar extends JMenuBar {
         });
         fileMenu.add(openItem); // 'Open' end ; add to fileMenu
 
+        //===== Open Recent =====
+        openRecentMenu = new JMenu(Application.localized("openRecent"));
+        updateOpenRecentMenu();
 
         add(fileMenu); // end of 'File' ; add fileMenu
 
@@ -214,6 +218,10 @@ public class RFActorMenuBar extends JMenuBar {
 
 
         add(transferMenu); // end of 'Transfer'
+    }
+
+    public void updateOpenRecentMenu() {
+
     }
 
 }
