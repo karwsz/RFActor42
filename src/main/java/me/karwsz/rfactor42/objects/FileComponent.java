@@ -1,21 +1,14 @@
 package me.karwsz.rfactor42.objects;
 
 import me.karwsz.rfactor42.Application;
-import me.karwsz.rfactor42.debug.ExceptionWindow;
+import me.karwsz.rfactor42.util.Assets;
 
-import javax.imageio.ImageIO;
-import javax.management.Attribute;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.nio.file.Files;
 import java.util.Map;
-import java.util.jar.Attributes;
 
 public class FileComponent extends JLabel {
 
@@ -73,23 +66,6 @@ public class FileComponent extends JLabel {
     }
 
 
-    static Font jetBrainsMono;
-    static Image folderIcon;
-    static {
-        try {
-            jetBrainsMono = Font.createFont(Font.PLAIN, FileComponent.class.getResourceAsStream("/fonts/JetBrainsMono-Regular.ttf"));
-            folderIcon = ImageIO.read(FileComponent.class.getResourceAsStream("/icons/icons8-folder-64-yellow.png"));
-        } catch (
-                FontFormatException |
-                IOException e) {
-            throw new RuntimeException(e);
-        }
-        jetBrainsMono = jetBrainsMono.deriveFont( 11.75f);
-
-
-        folderIcon = folderIcon.getScaledInstance(16, 16, Image.SCALE_REPLICATE);
-
-    }
 
     private int prefWidth = 0;
 
@@ -98,7 +74,7 @@ public class FileComponent extends JLabel {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
-        Font jetbrainsFont = jetBrainsMono;
+        Font jetbrainsFont = Assets.jetBrainsMono;
 
         enableAntialias(g2d);
         if (file.isDirectory()) {
@@ -113,7 +89,7 @@ public class FileComponent extends JLabel {
                 g2d.drawString("RFA", 8 + getDepthSpace() - stringWidth, getHeight() / 2 + getFont().getSize() / 2);
 
             }
-            else g2d.drawImage(folderIcon, 5 + getDepthSpace() - folderIcon.getWidth(null) / 2 - 4, getHeight() / 2 - folderIcon.getHeight(null) / 2 + 1, null);
+            else g2d.drawImage(Assets.folderIcon, 5 + getDepthSpace() - Assets.folderIcon.getWidth(null) / 2 - 4, getHeight() / 2 - Assets.folderIcon.getHeight(null) / 2 + 1, null);
         }
         else if (file.isCONFile()) {
             g2d.setColor(Color.decode("#009900"));

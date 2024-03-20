@@ -1,9 +1,11 @@
-package me.karwsz.rfactor42.modules;
+package me.karwsz.rfactor42.modules.editor;
 
 import me.karwsz.rfactor42.objects.EditorSession;
 import me.karwsz.rfactor42.objects.FileTreeElement;
+import me.karwsz.rfactor42.util.Assets;
 
 import javax.swing.*;
+import javax.swing.text.*;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
@@ -21,6 +23,7 @@ public class CONEditor extends JPanel {
     private EditorSession activeSession;
     private JScrollPane editorScrollPane;
     private JEditorPane editorPane;
+    private DefaultStyledDocument document;
 
     public CONEditor() {
         init();
@@ -38,10 +41,14 @@ public class CONEditor extends JPanel {
                 return new Dimension(pref.width - editorScrollPane.getHorizontalScrollBar().getWidth(), pref.height);
             }
         };
+
+        document = new DefaultStyledDocument();
+        editorPane.setDocument(document);
+
         editorPane.setForeground(UIManager.getColor("TextArea.foreground"));
-        editorPane.setBackground(UIManager.getColor("TextArea.focusedBackground"));
+        editorPane.setBackground(UIManager.getColor("TextArea.background"));
         editorPane.setMargin(new Insets(5, 10, 5, 5));
-        editorPane.setFont(getFont().deriveFont(15f));
+        editorPane.setFont(Assets.jetBrainsMono.deriveFont(14f));
         editorPane.setOpaque(true);
 
         setupUndoRedo();
@@ -59,6 +66,7 @@ public class CONEditor extends JPanel {
         editorScrollPane.getHorizontalScrollBar().setUnitIncrement(15);
 
         add(editorScrollPane, gbc);
+
     }
 
     public void reset() {

@@ -12,7 +12,9 @@ public class GlobalSettings {
     private final HashMap<String, ArrayList<String>> settings = new HashMap<>();
 
     public void parseFromFile() {
-        File file = new File("./global.r42");
+        addValue("theme", "Dark");
+        addValue("locale", "en");
+        File file = new File("global.r42");
         try {
             if (!file.exists()) file.createNewFile();
             BufferedReader bufferedReader = new BufferedReader(new BufferedReader(new FileReader(file)));
@@ -28,8 +30,6 @@ public class GlobalSettings {
                 IOException e) {
             throw new RuntimeException(e);
         }
-        addValue("theme", "Darcula");
-        addValue("locale", "en");
         write();
     }
 
@@ -50,7 +50,6 @@ public class GlobalSettings {
             if (values.contains(value)) return;
         }
         values.add(value);
-        write();
     }
 
     private ArrayList<String> getValues(String key) {

@@ -1,6 +1,7 @@
 package me.karwsz.rfactor42.modules;
 
 import me.karwsz.rfactor42.debug.ExceptionWindow;
+import me.karwsz.rfactor42.modules.editor.CONEditor;
 import me.karwsz.rfactor42.objects.ProjectSettings;
 
 import javax.swing.*;
