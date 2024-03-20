@@ -52,7 +52,7 @@ public class GlobalSettings {
         values.add(value);
     }
 
-    private ArrayList<String> getValues(String key) {
+    public ArrayList<String> getValues(String key) {
         key = key.toLowerCase();
         return settings.getOrDefault(key, new ArrayList<>());
     }

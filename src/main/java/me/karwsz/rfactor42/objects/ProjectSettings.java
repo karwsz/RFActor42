@@ -75,6 +75,9 @@ public class ProjectSettings {
         String lastTargetFileString = settings.getOrDefault("lastFileTarget", null);
         this.lastTargetFile = lastTargetFileString != null ? lastTargetFileString : "/home/example/bf1942/mods/bf1942/archives/bf1942/levels/" + RFAModule.getOutputFile().getName();
         this.selectedHost = settings.getOrDefault("selectedHost", null);
+        if (!Application.globalSettings.getValues("selectedHost").contains(selectedHost)) {
+            this.selectedHost = null;
+        }
         this.shouldRemoveNonServer = Boolean.parseBoolean(settings.getOrDefault("removeNonServer", "false"));
 
         write();
