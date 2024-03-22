@@ -47,7 +47,7 @@ public class GlobalSettings {
             values.clear();
         }
         else if (strategy.equals(StoreStrategy.REMOVE_DUPLICATES)) {
-            if (values.contains(value)) return;
+            values.remove(value);
         }
         values.add(value);
     }
@@ -82,6 +82,7 @@ public class GlobalSettings {
     static {
         keyStrategies.put("open", StoreStrategy.ALLOW_ONE);
         keyStrategies.put("addcredentials", StoreStrategy.REMOVE_DUPLICATES);
+        keyStrategies.put("addrecentproject", StoreStrategy.REMOVE_DUPLICATES);
     }
 
     private StoreStrategy getStrategy(String key) {

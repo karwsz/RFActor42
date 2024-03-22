@@ -1,5 +1,6 @@
 package me.karwsz.rfactor42.modules;
 
+import me.karwsz.rfactor42.Application;
 import me.karwsz.rfactor42.debug.ExceptionWindow;
 import me.karwsz.rfactor42.modules.editor.CONEditor;
 import me.karwsz.rfactor42.objects.ProjectSettings;
@@ -59,6 +60,8 @@ public class ModuleManager {
 
         if (conEditor != null) conEditor.reset();
 
+        Application.globalSettings.addValue("addrecentproject", file.getAbsolutePath());
+        RFActorMenuBar.updateOpenRecentMenu();
         updateFileStructure();
     }
 

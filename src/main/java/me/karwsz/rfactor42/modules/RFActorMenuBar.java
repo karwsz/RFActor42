@@ -6,6 +6,7 @@ import me.karwsz.rfactor42.objects.ProjectSettings;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.io.File;
+import java.util.ArrayList;
 
 public class RFActorMenuBar extends JMenuBar {
 
@@ -67,6 +68,7 @@ public class RFActorMenuBar extends JMenuBar {
         //===== Open Recent =====
         openRecentMenu = new JMenu(Application.localized("openRecent"));
         updateOpenRecentMenu();
+        fileMenu.add(openRecentMenu);
 
         add(fileMenu); // end of 'File' ; add fileMenu
 
@@ -74,7 +76,6 @@ public class RFActorMenuBar extends JMenuBar {
         add(editMenu); // end of 'Edit' ; add editMenu
 
         JMenu viewMenu = new JMenu(Application.localized("view")); // start of 'View'
-
 
         //===== 'Show .con files only' =====
         showConFilesOnly = new JCheckBoxMenuItem(Application.localized("show_.con_files_only"));
@@ -221,7 +222,24 @@ public class RFActorMenuBar extends JMenuBar {
     }
 
     public void updateOpenRecentMenu() {
+        openRecentMenu.removeAll();
+        ArrayList<String> values = Application.globalSettings.getValues("addRecentProject");
+        for (int i = values.size() - 1; i >= 0; i--) {
+            openRecentMenu.add(openRecentItem(values.get(i)));
+        }
+    }
 
+    private JMenuItem openRecentItem(String path) {
+        JMenuItem recentItem = new JMenuItem(path);
+        recentItem.addActionListener(e -> {
+            File directory = new File(path);
+            if (!FileStructure.isProjectDir(directory)) {
+                JOptionPane.showMessageDialog(Application.instance, Application.localized("notAProject"), "", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            Application.instance.moduleManager.openProject(directory);
+        });
+        return recentItem;
     }
 
 }

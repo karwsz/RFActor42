@@ -15,6 +15,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 /**
@@ -34,6 +35,10 @@ public class FileStructure {
 
     private FileTreeElement parentDir;
 
+    public static boolean isProjectDir(File file) {
+        return file != null && file.exists() && file.isDirectory() &&
+                Arrays.stream(file.listFiles()).anyMatch(f -> f.getName().equals(ProjectSettings.PROJECT_SETTINGS_FILE));
+    }
 
 
     public void open(File directory) {
@@ -44,7 +49,7 @@ public class FileStructure {
         Application.globalSettings.write();
     }
 
-    public static int MAX_FILES = 500;
+    public static int MAX_FILES = 1024;
 
     int filesAmount;
 

@@ -50,7 +50,7 @@ public class ProjectSettings {
 
 
     public void parseFile() {
-        File file = new File(parentDir,"project.r42");
+        File file = new File(parentDir,PROJECT_SETTINGS_FILE);
         HashMap<String, String> settings = new HashMap<>();
         try {
             if (!file.exists()) file.createNewFile();
@@ -83,8 +83,11 @@ public class ProjectSettings {
         write();
     }
 
+    public static String PROJECT_SETTINGS_FILE = "project.r42";
+
+
     public void write() {
-        File settingsFile = new File(parentDir, "project.r42");
+        File settingsFile = new File(parentDir, PROJECT_SETTINGS_FILE);
         try {
             settingsFile.createNewFile();
         } catch (
