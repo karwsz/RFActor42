@@ -2,11 +2,11 @@ package me.karwsz.rfactor42.objects;
 
 import me.karwsz.rfactor42.Application;
 import me.karwsz.rfactor42.modules.RFAModule;
+import me.karwsz.rfactor42.modules.serialization.YAMLConfig;
 
 import java.io.*;
-import java.util.HashMap;
 
-public class ProjectSettings {
+public class ProjectSettings extends YAMLConfig {
     private final File parentDir;
     private File baseDirectory = null;
 
@@ -24,7 +24,7 @@ public class ProjectSettings {
 
     public void setCompress(boolean compress) {
         this.compress = compress;
-        write();
+        save(getProjectSettingsFile());
     }
 
     public boolean shouldCompress() {
@@ -41,7 +41,7 @@ public class ProjectSettings {
 
     public void setRFABaseDirectory(File baseDirectory) {
         this.baseDirectory = baseDirectory;
-        write();
+        save(getProjectSettingsFile());
     }
 
     public static ProjectSettings instance() {
@@ -49,69 +49,49 @@ public class ProjectSettings {
     }
 
 
-    public void parseFile() {
-        File file = new File(parentDir,PROJECT_SETTINGS_FILE);
-        HashMap<String, String> settings = new HashMap<>();
+    public void init() {
+        File psf = getProjectSettingsFile();
         try {
-            if (!file.exists()) file.createNewFile();
-            BufferedReader bufferedReader = new BufferedReader(new BufferedReader(new FileReader(file)));
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                if (line.startsWith("+")) {
-                    String[] keyVal = line.split(" ");
-                    String key = keyVal[0].substring(1);
-                    settings.put(key, keyVal.length < 2 || "".equalsIgnoreCase(keyVal[1]) ? null : line.substring(key.length() + 2));
-                }
-            }
-        } catch (
-                IOException e) {
+            load(psf);
+        } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
 
-        String baseDirString = settings.getOrDefault("RFAbase", null);
-        this.baseDirectory = baseDirString != null && !baseDirString.isBlank() ? new File(baseDirString) : null;
-        this.compress = Boolean.parseBoolean(settings.getOrDefault("compress", "true"));
-        this.showConFilesOnly = Boolean.parseBoolean(settings.getOrDefault("showConFilesOnly", "true"));
-        String lastTargetFileString = settings.getOrDefault("lastFileTarget", null);
-        this.lastTargetFile = lastTargetFileString != null ? lastTargetFileString : "/home/example/bf1942/mods/bf1942/archives/bf1942/levels/" + RFAModule.getOutputFile().getName();
-        this.selectedHost = settings.getOrDefault("selectedHost", null);
+        this.baseDirectory = getFile("RFAbase");
+        this.compress = getBoolean("compress", true);
+        this.showConFilesOnly = getBoolean("showConFilesOnly", true);
+        this.lastTargetFile = getString("lastFileTarget",
+                "/home/example/bf1942/mods/bf1942/archives/bf1942/levels/" + RFAModule.getOutputFile().getName());
+       this.selectedHost = getString("selectedHost", null);
+
         if (!Application.globalSettings.getValues("selectedHost").contains(selectedHost)) {
             this.selectedHost = null;
         }
-        this.shouldRemoveNonServer = Boolean.parseBoolean(settings.getOrDefault("removeNonServer", "false"));
 
-        write();
+        this.shouldRemoveNonServer = getBoolean("removeNonServer", false);
+
+        save(psf);
     }
 
-    public static String PROJECT_SETTINGS_FILE = "project.r42";
 
 
-    public void write() {
-        File settingsFile = new File(parentDir, PROJECT_SETTINGS_FILE);
+    private File getProjectSettingsFile() {
+        File file = new File(parentDir, PROJECT_SETTINGS_FILE);
         try {
-            settingsFile.createNewFile();
-        } catch (
-                IOException e) {
-            throw new RuntimeException(e);
-        }
-        try (FileWriter fileWriter = new FileWriter(settingsFile)) {
-            fileWriter.append("+RFAbase").append(" ").append(getRFABaseDirectory() == null ? "" : getRFABaseDirectory().getAbsolutePath()).append("\n");
-            fileWriter.append("+compress").append(" ").append(((Boolean) compress).toString()).append("\n");
-            fileWriter.append("+removeNonServer").append(" ").append(((Boolean) shouldRemoveNonServer).toString()).append("\n");
-            fileWriter.append("+showConFilesOnly").append(" ").append(((Boolean) showConFilesOnly).toString()).append("\n");
-
-            if (lastTargetFile != null) fileWriter.append("+lastFileTarget").append(" ").append((lastTargetFile)).append("\n");
-            if (selectedHost != null) fileWriter.append("+selectedHost").append(" ").append((selectedHost)).append("\n");
+            file.createNewFile();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        return file;
     }
+    public static String PROJECT_SETTINGS_FILE = "project.r42";
+
 
 
 
     public void toggleShowConFilesOnly() {
         showConFilesOnly = !showConFilesOnly;
-        write();
+        save(getProjectSettingsFile());
     }
 
     public boolean shouldShowConFilesOnly() {
@@ -124,7 +104,7 @@ public class ProjectSettings {
 
     public void setLastTargetFile(String lastTargetFile) {
         this.lastTargetFile = lastTargetFile;
-        write();
+        save(getProjectSettingsFile());
     }
 
     public String getSelectedHost() {
@@ -133,7 +113,7 @@ public class ProjectSettings {
 
     public void setSelectedHost(SFTPCredentials selectedHost) {
         this.selectedHost = selectedHost.serialize();
-        write();
+        save(getProjectSettingsFile());
     }
 
     public void setRemoveNonServer(boolean state) {

@@ -50,7 +50,7 @@ public class ModuleManager {
             projectSettings = new ProjectSettings(file);
         }
 
-        projectSettings.parseFile();
+        projectSettings.init();
 
         RFActorMenuBar.compressCheckbox.setState(projectSettings.shouldCompress());
         RFActorMenuBar.removeNonServerCheckbox.setState(projectSettings.shouldRemoveNonServer());
