@@ -49,18 +49,10 @@ public class FileStructure {
         Application.globalSettings.write();
     }
 
-    public static int MAX_FILES = 1024;
-
     int filesAmount;
 
     private void addAllChildrenToElement(FileTreeElement element) {
         filesAmount++;
-        if (filesAmount > MAX_FILES) {
-            IllegalStateException exception = new IllegalStateException("Your project is too large! (It's over " + MAX_FILES + "!)");
-            new ExceptionWindow(exception);
-            filesAmount = 0;
-            throw exception;
-        }
         if (element.file().isDirectory()) {
             File[] files = element.file().listFiles();
             ArrayList<FileTreeElement> fileRefs = new ArrayList<>();
