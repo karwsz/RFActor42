@@ -9,3 +9,5 @@ Main planned features:
 - RFA pack/unpack
 - Test packed level locally or send it to server and run via sftp and remote console
 - Autocompletion for commands used in .con files
+
+![Current version presentation](./readmeimg0.png)
